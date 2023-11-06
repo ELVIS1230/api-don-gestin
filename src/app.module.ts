@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AccountsModule } from './accounts/accounts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -20,7 +19,6 @@ import { AppController } from './app.controller';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
-    AccountsModule,
     UsersModule,
     AppModule,
   ],

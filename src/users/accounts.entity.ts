@@ -1,20 +1,17 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity('accounts')
-class Accounts {
+@Entity('cuentas')
+export class Accounts {
   // @Column({ unique: true })
-  @PrimaryColumn()
-  id: string;
+  @PrimaryColumn({ primaryKeyConstraintName: 'cuenta_id_pk' })
+  cuenta_id: string;
 
-  @Column()
-  balance: number;
+  @Column({ type: 'decimal', default: () => '00.00' })
+  cuenta_saldo: number;
 
   @Column({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
-
-  @Column()
-  idUser: string;
 }
