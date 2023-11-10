@@ -15,13 +15,22 @@ export class UsersService {
   async getUser(u_cedula: string) {
     const userFound = await this.userRepository.findOne({
       where: { u_cedula },
+      relations: ['cuenta_id_fk'],
     });
 
-    console.log(this.createIDAccount(userFound));
+    return userFound
+      ? userFound
+      : new HttpException('Usuario no encontrado ', HttpStatus.NOT_FOUND);
+  }
 
-    return !userFound
-      ? new HttpException('Usuario no encontrado ', HttpStatus.NOT_FOUND)
-      : userFound;
+  async getAccount(cuenta_id: string) {
+    const accoutFound = await this.accountRepository.findOne({
+      where: { cuenta_id },
+    });
+
+    return !accoutFound
+      ? new HttpException('Cuenta no encontrada ', HttpStatus.NOT_FOUND)
+      : accoutFound;
   }
 
   async createUsers(user: CreateUserDto) {
@@ -39,7 +48,6 @@ export class UsersService {
       ...user,
       cuenta_id_fk: accountID,
     });
-
     return this.userRepository.save(newUser);
   }
 
@@ -56,5 +64,25 @@ export class UsersService {
     const newAccount = this.accountRepository.create({ cuenta_id: AccountsID });
     const savedAccount = this.accountRepository.save(newAccount);
     return savedAccount;
+  }
+  async incrementBalanceAccount(AccountsID: string, Amount: number) {
+    const accountRepository = await this.accountRepository.increment(
+      {
+        cuenta_id: AccountsID,
+      },
+      'cuenta_saldo',
+      Amount,
+    );
+    return accountRepository;
+  }
+  async decrementBalanceAccount(AccountsID: string, Amount: number) {
+    const accountRepository = await this.accountRepository.decrement(
+      {
+        cuenta_id: AccountsID,
+      },
+      'cuenta_saldo',
+      Amount,
+    );
+    return accountRepository;
   }
 }

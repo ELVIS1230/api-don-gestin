@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Transactions } from 'src/transactions/transactions.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
 @Entity('cuentas')
 export class Accounts {
@@ -14,4 +15,7 @@ export class Accounts {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
+
+  @OneToMany(() => Transactions, (transaction) => transaction.cuenta_id_fk)
+  transactions: Transactions[];
 }
