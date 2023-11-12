@@ -4,6 +4,7 @@ import { Users } from './users.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { Accounts } from './accounts.entity';
+import { CreateAccountDto } from 'src/dto/create-accounts.dto';
 
 @Injectable()
 export class UsersService {
@@ -65,7 +66,8 @@ export class UsersService {
     const savedAccount = this.accountRepository.save(newAccount);
     return savedAccount;
   }
-  async incrementBalanceAccount(AccountsID: string, Amount: number) {
+  async incrementBalanceAccount(AccountsID: any, Amount: number) {
+    console.log(AccountsID);
     const accountRepository = await this.accountRepository.increment(
       {
         cuenta_id: AccountsID,
