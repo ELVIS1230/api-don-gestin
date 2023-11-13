@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { TypeTrasanctions } from './type-transactions.entity';
 import { Accounts } from 'src/users/accounts.entity';
+import { Cards } from 'src/cards/cards.entity';
 
 @Entity('trasacciones')
 export class Transactions {
@@ -41,7 +42,14 @@ export class Transactions {
   @ManyToOne(() => Accounts, (account) => account.transactions)
   @JoinColumn({
     name: 'cuenta_id_fk',
-    foreignKeyConstraintName: 'cuenta_id_fk',
+    foreignKeyConstraintName: 'cuenta_fk',
   })
   cuenta_id_fk: Accounts;
+
+  @ManyToOne(() => Cards, (card) => card.transactions)
+  @JoinColumn({
+    name: 'tarj_id_fk',
+    foreignKeyConstraintName: 'tarj_fk',
+  })
+  tarj_id_fk: Cards;
 }
