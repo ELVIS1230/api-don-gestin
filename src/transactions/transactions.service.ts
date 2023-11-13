@@ -23,13 +23,34 @@ export class TransactionsService {
     });
 
     return !transactionsFound
-      ? new HttpException(
-          'Transacciones de cuenta no encotrada',
-          HttpStatus.NOT_FOUND,
-        )
+      ? new HttpException('Transacciones no encotradas', HttpStatus.NOT_FOUND)
       : transactionsFound;
   }
-  getOneTransaction() {}
+
+  getTransactionIncomes(cuentaID: string) {
+    const transactionsFound = this.transactionsRepository.find({
+      where: {
+        cuenta_id_fk: { cuenta_id: cuentaID },
+        ttrac_id_fk: { ttrac_id: 1 },
+      },
+      relations: ['ttrac_id_fk'],
+    });
+    return !transactionsFound
+      ? new HttpException('Transacciones no encontradas', HttpStatus.NOT_FOUND)
+      : transactionsFound;
+  }
+  getTransactionExpenses(cuentaID: string) {
+    const transactionsFound = this.transactionsRepository.find({
+      where: {
+        cuenta_id_fk: { cuenta_id: cuentaID },
+        ttrac_id_fk: { ttrac_id: 2 },
+      },
+      relations: ['ttrac_id_fk'],
+    });
+    return !transactionsFound
+      ? new HttpException('Transacciones no encontradas', HttpStatus.NOT_FOUND)
+      : transactionsFound;
+  }
 
   async createTransaction(transaction: CreateTransactionDto) {
     const accountFound = (await this.usersServices.getAccount(

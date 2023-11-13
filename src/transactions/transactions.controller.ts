@@ -14,4 +14,13 @@ export class TransactionsController {
   getTransactions(@Param('id') id: string) {
     return this.transactionsService.getAllTransactions(id);
   }
+
+  @Get(':id/incomes')
+  getTransactionsIncomes(@Param('id') id: string) {
+    return this.transactionsService.getTransactionIncomes(id);
+  }
+  @Get(':id/expenses')
+  getTransactionsExpenses(@Param('id') id: string) {
+    return this.transactionsService.getTransactionExpenses(id);
+  }
 }

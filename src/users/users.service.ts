@@ -4,7 +4,6 @@ import { Users } from './users.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { Accounts } from './accounts.entity';
-import { CreateAccountDto } from 'src/dto/create-accounts.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,6 +26,7 @@ export class UsersService {
   async getAccount(cuenta_id: string) {
     const accoutFound = await this.accountRepository.findOne({
       where: { cuenta_id },
+      relations: ['cards'],
     });
 
     return !accoutFound
