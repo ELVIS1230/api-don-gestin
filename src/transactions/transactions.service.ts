@@ -5,6 +5,8 @@ import { Transactions } from './transactions.entity';
 import { Repository } from 'typeorm';
 import { CreateTransactionDto } from 'src/dto/create-transactions.dto';
 import { Accounts } from 'src/users/accounts.entity';
+import { CardsService } from 'src/cards/cards.service';
+import { Cards } from 'src/cards/cards.entity';
 
 @Injectable()
 export class TransactionsService {
@@ -12,6 +14,7 @@ export class TransactionsService {
     @InjectRepository(Transactions)
     private transactionsRepository: Repository<Transactions>,
     private usersServices: UsersService,
+    private cardsService: CardsService,
   ) {}
 
   getAllTransactions(cuentaID_fk: string) {
@@ -59,14 +62,18 @@ export class TransactionsService {
 
     if (accountFound instanceof HttpException) {
       return new HttpException('Cuenta no encontrada ', HttpStatus.NOT_FOUND);
-    } else if (
-      accountFound.cuenta_saldo <= 0.0 &&
-      transaction.ttrac_id_fk.ttrac_id === 2
-    ) {
-      return new HttpException('La cuenta esta en cero ', HttpStatus.CONFLICT);
+    } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
+      if (
+        accountFound.cuenta_saldo <= 0.0 ||
+        accountFound.cuenta_saldo < transaction.trasac_cantidad
+      ) {
+        return new HttpException(
+          'La trasanccion supera el valor de su cuenta',
+          HttpStatus.CONFLICT,
+        );
+      }
     }
-    console.log(accountFound);
-    console.log(transaction);
+
     let balanceTotal: number = 0;
     if (transaction.ttrac_id_fk.ttrac_id === 1) {
       await this.usersServices.incrementBalanceAccount(
@@ -90,6 +97,56 @@ export class TransactionsService {
       ...transaction,
       trasac_saldo: balanceTotal,
     });
+    return await this.transactionsRepository.save(newTrasanction);
+  }
+
+  async createTrasanctionWithCard(transaction: CreateTransactionDto) {
+    const cardFound = (await this.cardsService.getCard(
+      transaction.tarj_id_fk.tarj_id,
+    )) as Cards;
+
+    if (cardFound instanceof HttpException) {
+      return new HttpException('Tarjeta no encontrada ', HttpStatus.NOT_FOUND);
+    } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
+      if (
+        cardFound.tarj_saldo_total <= 0.0 ||
+        cardFound.tarj_saldo_total < transaction.trasac_cantidad
+      ) {
+        return new HttpException(
+          'La trasanccion supera el valor disponible de su tarjeta',
+          HttpStatus.CONFLICT,
+        );
+      }
+    }
+    let balanceTotal = 0;
+
+    if (transaction.ttrac_id_fk.ttrac_id === 1) {
+      await this.cardsService.incrementBalanceCard(
+        transaction.tarj_id_fk.tarj_id,
+        transaction.trasac_cantidad,
+      );
+
+      balanceTotal =
+        parseFloat(cardFound.tarj_saldo_total.toString()) +
+        transaction.trasac_cantidad;
+    } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
+      await this.cardsService.decrementBalanceCard(
+        transaction.tarj_id_fk.tarj_id,
+        transaction.trasac_cantidad,
+      );
+
+      balanceTotal =
+        parseFloat(cardFound.tarj_saldo_total.toString()) -
+        transaction.trasac_cantidad;
+    }
+
+    const newTrasanction = this.transactionsRepository.create({
+      ...transaction,
+      trasac_saldo: balanceTotal,
+    });
+
+    // console.log(cardFound);
+    // console.log(transaction);
     return await this.transactionsRepository.save(newTrasanction);
   }
 }

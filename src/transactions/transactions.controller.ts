@@ -9,6 +9,10 @@ export class TransactionsController {
   createTransaction(@Body() transaction: CreateTransactionDto) {
     return this.transactionsService.createTransaction(transaction);
   }
+  @Post('/cards')
+  createTransactionWithCard(@Body() transaction: CreateTransactionDto) {
+    return this.transactionsService.createTrasanctionWithCard(transaction);
+  }
 
   @Get(':id')
   getTransactions(@Param('id') id: string) {
