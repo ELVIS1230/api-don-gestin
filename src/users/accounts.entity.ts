@@ -1,4 +1,5 @@
 import { Cards } from 'src/cards/cards.entity';
+import { Savings } from 'src/savings/savings.entity';
 import { Transactions } from 'src/transactions/transactions.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
@@ -22,4 +23,7 @@ export class Accounts {
 
   @OneToMany(() => Cards, (card) => card.cuenta_id_fk)
   cards: Cards[];
+
+  @OneToMany(() => Savings, (saving) => saving.cuenta_id_fk)
+  savings: Savings[];
 }

@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CardsModule } from './cards/cards.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { SavingsModule } from './savings/savings.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     TransactionsModule,
     CardsModule,
     ScheduleModule.forRoot(),
+    SavingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
