@@ -83,7 +83,10 @@ export class TransactionsService {
       balanceTotal =
         parseFloat(accountFound.cuenta_saldo.toString()) +
         transaction.trasac_cantidad;
-    } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
+    } else if (
+      transaction.ttrac_id_fk.ttrac_id === 2 ||
+      transaction.ttrac_id_fk.ttrac_id === 3
+    ) {
       await this.usersServices.decrementBalanceAccount(
         transaction.cuenta_id_fk.cuenta_id,
         transaction.trasac_cantidad,
@@ -97,6 +100,7 @@ export class TransactionsService {
       ...transaction,
       trasac_saldo: balanceTotal,
     });
+
     return await this.transactionsRepository.save(newTrasanction);
   }
 

@@ -26,7 +26,7 @@ export class UsersService {
   async getAccount(cuenta_id: string) {
     const accoutFound = await this.accountRepository.findOne({
       where: { cuenta_id },
-      relations: ['cards'],
+      relations: ['cards', 'savings'],
     });
 
     return !accoutFound

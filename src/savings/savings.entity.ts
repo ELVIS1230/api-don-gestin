@@ -6,12 +6,12 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity('ahorros')
 export class Savings {
-  @PrimaryGeneratedColumn({
+  @PrimaryColumn({
     primaryKeyConstraintName: 'ahorro_pk',
   })
   aho_id: string;
@@ -23,7 +23,10 @@ export class Savings {
   aho_descripcion: string;
 
   @Column({ type: 'decimal' })
-  aho_cantidad: number;
+  aho_meta_cantidad: number;
+
+  @Column({ type: 'decimal' })
+  aho_cantidad_total: number;
 
   @ManyToOne(() => Accounts, (acount) => acount.savings)
   @JoinColumn({
@@ -33,5 +36,5 @@ export class Savings {
   cuenta_id_fk: Accounts;
 
   @OneToMany(() => Transactions, (transaction) => transaction.aho_id_fk)
-  trasacciones: Transactions;
+  trasactions: Transactions;
 }

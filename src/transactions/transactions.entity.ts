@@ -54,7 +54,7 @@ export class Transactions {
   })
   tarj_id_fk: Cards;
 
-  @ManyToOne(() => Savings, (saving) => saving.trasacciones)
+  @ManyToOne(() => Savings, (saving) => saving.trasactions)
   @JoinColumn({
     name: 'aho_id_fk',
     foreignKeyConstraintName: 'aho_fk',
