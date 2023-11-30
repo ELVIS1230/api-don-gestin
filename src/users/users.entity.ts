@@ -2,11 +2,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryColumn,
   Unique,
 } from 'typeorm';
 import { Accounts } from './accounts.entity';
+import { Reminders } from 'src/reminders/reminders.entity';
 
 @Entity('usuarios')
 @Unique('correo_unico', ['u_correo'])
@@ -45,4 +47,7 @@ export class Users {
     foreignKeyConstraintName: 'cuenta_id_fk',
   })
   cuenta_id_fk: Accounts;
+
+  @OneToMany(() => Reminders, (reminder) => reminder.u_cedula_fk)
+  reminders: Reminders[];
 }

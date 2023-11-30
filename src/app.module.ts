@@ -8,6 +8,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { CardsModule } from './cards/cards.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SavingsModule } from './savings/savings.module';
+import { RemindersModule } from './reminders/reminders.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { SavingsModule } from './savings/savings.module';
     CardsModule,
     ScheduleModule.forRoot(),
     SavingsModule,
+    RemindersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

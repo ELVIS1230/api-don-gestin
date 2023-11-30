@@ -36,5 +36,5 @@ export class Savings {
   cuenta_id_fk: Accounts;
 
   @OneToMany(() => Transactions, (transaction) => transaction.aho_id_fk)
-  trasactions: Transactions;
+  trasactions: Transactions[];
 }
