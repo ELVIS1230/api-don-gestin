@@ -12,11 +12,11 @@ export class Reminders {
   @Column({ type: 'varchar' })
   record_descripcion: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'date' })
   record_fecha: string;
 
-  @Column({ type: 'varchar' })
-  record_hora: string;
+  //   @Column({ type: 'varchar' })
+  //   record_hora: string;
 
   @ManyToOne(() => Users, (user) => user.reminders)
   @JoinColumn({

@@ -15,7 +15,7 @@ export class UsersService {
   async getUser(u_cedula: string) {
     const userFound = await this.userRepository.findOne({
       where: { u_cedula },
-      relations: ['cuenta_id_fk'],
+      relations: ['cuenta_id_fk', 'reminders'],
     });
 
     return userFound
