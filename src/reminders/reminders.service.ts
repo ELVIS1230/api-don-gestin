@@ -6,6 +6,7 @@ import { CreateRemindersDto } from 'src/dto/create-reminders.dto';
 import { UsersService } from 'src/users/users.service';
 import { Users } from 'src/users/users.entity';
 import * as dayjs from 'dayjs';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class RemindersService {
@@ -13,6 +14,7 @@ export class RemindersService {
     @InjectRepository(Reminders)
     private remindersRepository: Repository<Reminders>,
     private usersService: UsersService,
+    private mailerService: MailerService,
   ) {}
 
   // private readonly logger = new Logger(RemindersService.name);
@@ -25,11 +27,17 @@ export class RemindersService {
   // }
 
   async verifyReminders() {
-    const reminders = (await this.getRemindersForDate()) as Reminders[];
-    for (const reminder of reminders){
-      
-    }
-    return reminders;
+    await this.mailerService.sendMail({
+      from: 'elcochineytor@gmail.com',
+      to: 'vladimirortiz1230@gmail.com',
+      subject: 'Recordatorio de pago',
+      text: 'Tienes que pagar pejelagarto',
+    });
+    // const reminders = (await this.getRemindersForDate()) as Reminders[];
+    // for (const reminder of reminders){
+
+    // }
+    return 'Enviado correctamente ';
     // if
   }
 
