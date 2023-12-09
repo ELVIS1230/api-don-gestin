@@ -7,6 +7,11 @@ import { CreateTransactionDto } from 'src/dto/create-transactions.dto';
 import { Accounts } from 'src/users/accounts.entity';
 import { CardsService } from 'src/cards/cards.service';
 import { Cards } from 'src/cards/cards.entity';
+import { Users } from 'src/users/users.entity';
+// import * as PDFDocument from 'pdfkit';
+// import 'pdfkit-tables';
+import PDFDocument from 'pdfkit-table';
+// import { PDFDocument } from 'pdfkit';
 
 @Injectable()
 export class TransactionsService {
@@ -22,7 +27,7 @@ export class TransactionsService {
       where: {
         cuenta_id_fk: { cuenta_id: cuentaID_fk },
       },
-      relations: ['cuenta_id_fk'],
+      relations: ['cuenta_id_fk', 'ttrac_id_fk'],
     });
 
     return !transactionsFound
@@ -83,7 +88,10 @@ export class TransactionsService {
       balanceTotal =
         parseFloat(accountFound.cuenta_saldo.toString()) +
         transaction.trasac_cantidad;
-    } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
+    } else if (
+      transaction.ttrac_id_fk.ttrac_id === 2 ||
+      transaction.ttrac_id_fk.ttrac_id === 3
+    ) {
       await this.usersServices.decrementBalanceAccount(
         transaction.cuenta_id_fk.cuenta_id,
         transaction.trasac_cantidad,
@@ -97,6 +105,7 @@ export class TransactionsService {
       ...transaction,
       trasac_saldo: balanceTotal,
     });
+
     return await this.transactionsRepository.save(newTrasanction);
   }
 
@@ -148,5 +157,43 @@ export class TransactionsService {
     // console.log(cardFound);
     // console.log(transaction);
     return await this.transactionsRepository.save(newTrasanction);
+  }
+
+  async createReports(userID: string): Promise<Buffer> {
+    const userFound = (await this.usersServices.getUser(userID)) as Users;
+    console.log(userFound.cuenta_id_fk.cuenta_id);
+
+    const transactionsFound = (await this.getAllTransactions(
+      userFound.cuenta_id_fk.cuenta_id,
+    )) as Transactions[];
+    console.log(transactionsFound);
+    const pdfBuffer: Buffer = await new Promise((resolve) => {
+      const doc = new PDFDocument();
+
+      doc.text('PDF generado');
+      doc.moveDown();
+      doc.text('Ejemplo con next js');
+
+      const table = {
+        headers: ['Trasaccion', 'Nombre', 'Cantidad', 'Total'],
+        rows: transactionsFound.map((transaction) => [
+          transaction.ttrac_id_fk.ttracc_nombre,
+          transaction.trasac_nombre,
+          transaction.trasac_cantidad.toString(),
+          transaction.trasac_saldo.toString(),
+        ]),
+      };
+      doc.moveDown().table(table, { width: 400 });
+
+      const buffers = [];
+      doc.on('data', buffers.push.bind(buffers));
+      doc.on('end', () => {
+        const data = Buffer.concat(buffers);
+        resolve(data);
+      });
+      doc.end();
+    });
+
+    return pdfBuffer;
   }
 }

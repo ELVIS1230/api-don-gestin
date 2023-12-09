@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Accounts } from 'src/users/accounts.entity';
 import { CreateCardDto } from 'src/dto/create-cards.dto';
-import { Cron, CronExpression } from '@nestjs/schedule';
+// import { Cron, CronExpression } from '@nestjs/schedule';
 import * as dayjs from 'dayjs';
 
 @Injectable()

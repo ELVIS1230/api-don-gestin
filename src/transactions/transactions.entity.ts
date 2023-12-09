@@ -8,6 +8,7 @@ import {
 import { TypeTrasanctions } from './type-transactions.entity';
 import { Accounts } from 'src/users/accounts.entity';
 import { Cards } from 'src/cards/cards.entity';
+import { Savings } from 'src/savings/savings.entity';
 
 @Entity('trasacciones')
 export class Transactions {
@@ -52,4 +53,11 @@ export class Transactions {
     foreignKeyConstraintName: 'tarj_fk',
   })
   tarj_id_fk: Cards;
+
+  @ManyToOne(() => Savings, (saving) => saving.trasactions)
+  @JoinColumn({
+    name: 'aho_id_fk',
+    foreignKeyConstraintName: 'aho_fk',
+  })
+  aho_id_fk: Savings;
 }

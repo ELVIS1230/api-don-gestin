@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { CreateTransactionDto } from 'src/dto/create-transactions.dto';
 import { TransactionsService } from './transactions.service';
 
@@ -26,5 +26,25 @@ export class TransactionsController {
   @Get(':id/expenses')
   getTransactionsExpenses(@Param('id') id: string) {
     return this.transactionsService.getTransactionExpenses(id);
+  }
+
+  @Get('/reports/:idUser')
+  async createReports(
+    @Res() res,
+    @Param('idUser') idUser: string,
+    // @Param('idAccount') idAccount: string,
+  ) {
+    const buffer = await this.transactionsService.createReports(idUser);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=reportes`,
+      'Content-Length': buffer.length,
+    });
+
+    // Llamada al servicio para generar el PDF
+    // const pdfBuffer = this.transactionsService.createReports(idUser);
+
+    // Enviar el PDF generado como respuesta
+    res.end(buffer);
   }
 }

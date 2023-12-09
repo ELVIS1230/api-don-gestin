@@ -12,4 +12,5 @@ export class CreateTransactionDto {
   ttrac_id_fk: TypeTrasanctions;
   cuenta_id_fk?: Accounts;
   tarj_id_fk?: Cards;
+  aho_id_fk?: any;
 }
