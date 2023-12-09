@@ -15,9 +15,6 @@ export class Reminders {
   @Column({ type: 'date' })
   record_fecha: string;
 
-  //   @Column({ type: 'varchar' })
-  //   record_hora: string;
-
   @ManyToOne(() => Users, (user) => user.reminders)
   @JoinColumn({
     foreignKeyConstraintName: 'cedula_fk',

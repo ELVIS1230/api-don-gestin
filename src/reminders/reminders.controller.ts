@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
 import { CreateRemindersDto } from 'src/dto/create-reminders.dto';
 
@@ -19,5 +19,9 @@ export class RemindersController {
   @Get('/date')
   getRemindersForDate() {
     return this.remindersServices.verifyReminders();
+  }
+  @Get('/date/:id')
+  updateReminderDate(@Param('id') id: string) {
+    return this.remindersServices.updateDateReminder(id);
   }
 }

@@ -27,25 +27,138 @@ export class RemindersService {
   // }
 
   async verifyReminders() {
-    await this.mailerService.sendMail({
-      from: 'elcochineytor@gmail.com',
-      to: 'vladimirortiz1230@gmail.com',
-      subject: 'Recordatorio de pago',
-      text: 'Tienes que pagar pejelagarto',
-    });
-    // const reminders = (await this.getRemindersForDate()) as Reminders[];
-    // for (const reminder of reminders){
+    const reminders = (await this.getRemindersForDate()) as Reminders[];
 
-    // }
-    return 'Enviado correctamente ';
-    // if
+    for (const reminder of reminders) {
+      await this.mailerService.sendMail({
+        from: `"Don Gestin" <elcochineytor@gmail.com>`,
+        to: `${reminder.u_cedula_fk.u_correo}`,
+        subject: `Don gestin: ${reminder.record_nombre}`,
+        html: `
+          <html>
+          <head>
+          <style>
+
+          .contenedor-email{
+                  font-family:Arial;
+                  margin: 0 auto;
+                  border: 4px solid black;
+                  border-radius: 25px ;
+                  width: 450px;
+                  padding: 15px 15px 15px 15px ;
+              }
+           
+          .contenedor-icono .icono{
+              font-weight: 800;
+              font-size: 20px;
+              margin: 0;
+          }
+          .contenedor-icono .icono span{
+              font-weight: 500;
+          
+          }
+          .linea {
+              width: 45px;
+              height: 5px;
+              background: black;
+              position: absolute;
+              border-radius: 20px;
+          
+          }
+          .contenedor-titulo h1{
+              text-align: center;
+              margin: 25px 0 0 0 ;
+              font-weight: 900;
+              font-family:Tahoma ;
+      
+      
+          }
+          .linea2 {
+              width: 450px;
+              height: 5px;
+              margin-bottom: 30px;
+              background: black;
+              border-radius: 20px;
+          
+          }
+              .nombre span{
+                  font-weight: 800;
+              }
+              .contenedor-recordatorio{
+                  border: 2px solid black;
+                  border-radius: 15px;
+                  padding: 0px 0px 5px 20px;
+              }
+              .contenedor-recordatorio h1{
+              font-weight: 900;
+              margin: 8px 0 0 0 ;
+              font-family:Tahoma ;
+
+      
+              }
+              .contenedor-recordatorio h4{
+                  font-weight: 700;
+              }
+              .contenedor-recordatorio h4,.contenedor-recordatorio p{
+                  margin-left: 25px;
+      
+              }
+              .center{
+                  text-align: center;
+              }
+          </style>
+          </head>
+          <body>
+          </style>
+    <div class="body">
+        <div class="contenedor-email">
+            <div class="contenedor-icono">
+                <p class="icono">Don <span> Gestin</span></p>
+                <div class="linea"></div>
+            </div>
+            <div class="contenedor-titulo">
+                <h1 class="titulo">Recordatorio Pago </h1>
+                <div class="linea2"></div>
+            </div>
+            <div class="contenedor-parrafos">
+            <p class="nombre">Sr/a <span>${reminder.u_cedula_fk.u_nombre} ${reminder.u_cedula_fk.u_apellido}</span> se le notifica que usted creó un recordatorio en la aplicación 
+            <span>Don Gestin</span> para realizar algún pago</p>
+                <p class="center">El recordatorio que usted creo es:</p>
+            </div>
+
+            
+            <div class="contenedor-recordatorio">
+            <h1>${reminder.record_nombre}</h1>
+                <h4>Descripcion:</h4>
+                <p>${reminder.record_descripcion}</p>
+            </div>
+        </div>
+    </div>
+        </body>
+        </html>`,
+      });
+      await this.updateDateReminder(reminder.record_id);
+    }
+    return reminders;
+  }
+
+  async updateDateReminder(reminderID: string) {
+    // El formato de la fecha deberia ser 'YYYY-MM-DD'
+    const reminderFound = (await this.getReminder(reminderID)) as Reminders;
+    const updateCardDate = dayjs(reminderFound.record_fecha, 'MM-DD-YYYY')
+      .add(1, 'month')
+      .format('MM-DD-YYYY');
+    reminderFound.record_fecha = updateCardDate;
+    return await this.remindersRepository.save(reminderFound);
   }
 
   async getRemindersForDate() {
-    const today = dayjs().format('YYYY-MM-DD');
-    // console.log(dateNow);
+    // El formato de la fecha deberia ser 'YYYY-MM-DD'
+    const today = dayjs().format('MM-DD-YYYY');
+    console.log(today);
     const remindersFound = await this.remindersRepository.find({
       where: { record_fecha: today },
+      relations: ['u_cedula_fk'],
     });
     console.log(remindersFound);
     return remindersFound
@@ -63,6 +176,17 @@ export class RemindersService {
           'Hubo un error en encontrar los recordatorios ',
           HttpStatus.CONFLICT,
         );
+  }
+  async getReminder(reminderID: string) {
+    const reminderFound = await this.remindersRepository.findOne({
+      where: { record_id: reminderID },
+    });
+    return reminderFound;
+    // ? reminderFound
+    // : new HttpException(
+    //     'Hubo un error en encontrar los recordatorios ',
+    //     HttpStatus.CONFLICT,
+    //   );
   }
 
   async createReminders(reminder: CreateRemindersDto) {
