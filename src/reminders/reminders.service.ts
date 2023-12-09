@@ -168,15 +168,7 @@ export class RemindersService {
           HttpStatus.CONFLICT,
         );
   }
-  async getAllReminders() {
-    const remindersFound = await this.remindersRepository.find();
-    return remindersFound
-      ? remindersFound
-      : new HttpException(
-          'Hubo un error en encontrar los recordatorios ',
-          HttpStatus.CONFLICT,
-        );
-  }
+
   async getReminder(reminderID: string) {
     const reminderFound = await this.remindersRepository.findOne({
       where: { record_id: reminderID },
@@ -187,6 +179,16 @@ export class RemindersService {
     //     'Hubo un error en encontrar los recordatorios ',
     //     HttpStatus.CONFLICT,
     //   );
+  }
+  // async getAllReminders() {
+  //   const remindersFound = (await this.remindersRepository.find()) as Reminders[];
+  //   return remindersFound;
+  // }
+  async getAllRemindersForUser(cedula: string) {
+    const remindersFound = (await this.remindersRepository.find({
+      where: { u_cedula_fk: { u_cedula: cedula } },
+    })) as Reminders[];
+    return remindersFound;
   }
 
   async createReminders(reminder: CreateRemindersDto) {

@@ -11,9 +11,9 @@ export class RemindersController {
     return this.remindersServices.createReminders(reminder);
   }
 
-  @Get()
-  getAllReminders() {
-    return this.remindersServices.getAllReminders();
+  @Get('/:id')
+  getAllRemindersForUser(@Param('id') id: string) {
+    return this.remindersServices.getAllRemindersForUser(id);
   }
 
   @Get('/date')
