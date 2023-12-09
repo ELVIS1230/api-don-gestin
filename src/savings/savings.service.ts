@@ -48,4 +48,11 @@ export class SavingsService {
     const savingID = AccountID.substring(10, 12) + 'AHO' + numberSaving;
     return savingID;
   }
+  async getAllSavings(AccountID: string) {
+    const savingsFound = (await this.savingsRepository.find({
+      where: { cuenta_id_fk: { cuenta_id: AccountID } },
+    })) as Savings[];
+
+    return savingsFound;
+  }
 }

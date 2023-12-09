@@ -9,8 +9,12 @@ import {
 export class CardsController {
   constructor(private cardsServices: CardsService) {}
 
-  @Get()
-  getAllCards() {
+  @Get(':id')
+  getAllCards(@Param('id') id: string) {
+    return this.cardsServices.getAllCards(id);
+  }
+  @Get('/credit')
+  getAllCardsCredit() {
     return this.cardsServices.getAllCardsCredit();
   }
 

@@ -81,6 +81,18 @@ export class CardsService {
           HttpStatus.CONFLICT,
         );
   }
+  async getAllCards(cuentaID: string) {
+    const cardsFounds = await this.cardsRepository.find({
+      where: { cuenta_id_fk: { cuenta_id: cuentaID } },
+    });
+
+    return cardsFounds
+      ? cardsFounds
+      : new HttpException(
+          'Hubo un error en encontrar las cards',
+          HttpStatus.CONFLICT,
+        );
+  }
   async getCard(cardID: string) {
     const cardFound = (await this.cardsRepository.findOne({
       where: { tarj_id: cardID },
