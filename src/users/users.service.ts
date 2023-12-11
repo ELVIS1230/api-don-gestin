@@ -12,6 +12,20 @@ export class UsersService {
     @InjectRepository(Accounts) private accountRepository: Repository<Accounts>,
   ) {}
 
+  async loginUser(userLogin: { email: string; password: string }) {
+    const userFound = (await this.userRepository.findOne({
+      where: { u_correo: userLogin.email, u_contraseña: userLogin.password },
+      relations: ['cuenta_id_fk', 'reminders'],
+    })) as Users;
+
+    // console.log(userFound);
+    return userFound
+      ? userFound
+      : new HttpException(
+          'Credenciales incorrectas o no encontradas',
+          HttpStatus.NOT_FOUND,
+        );
+  }
   async getUser(u_cedula: string) {
     const userFound = await this.userRepository.findOne({
       where: { u_cedula },

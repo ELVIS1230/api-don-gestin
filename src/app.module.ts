@@ -29,16 +29,8 @@ import { RemindersModule } from './reminders/reminders.module';
     TransactionsModule,
     CardsModule,
     ScheduleModule.forRoot(),
-    // ResendModule.forRootAsync({
-    //   useFactory: async () => ({
-    //     apiKey: process.env.RESEND_KEY,
-    //   }),
-    // ResendModule.forRoot({
-    //   apiKey: process.env.RESEND_KEY,
-    // }),
     SavingsModule,
     RemindersModule,
-    // Resend,
   ],
   controllers: [AppController],
   providers: [AppService],
