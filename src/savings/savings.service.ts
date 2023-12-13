@@ -6,6 +6,7 @@ import { CreateSavingsDto } from 'src/dto/create-savings.dto';
 import { TransactionsService } from 'src/transactions/transactions.service';
 import { UsersService } from 'src/users/users.service';
 import { Accounts } from 'src/users/accounts.entity';
+import { SavingUpdateDto } from 'src/dto/saving-update.dto';
 
 @Injectable()
 export class SavingsService {
@@ -15,6 +16,30 @@ export class SavingsService {
     private userServices: UsersService,
   ) {}
 
+  // async updateAmountSaving(savingUpdate: { savingID: string; amount: number }) {
+  async updateAmountSaving(savingUpdate: SavingUpdateDto) {
+    const savingFound = (await this.getSaving(
+      savingUpdate.aho_id_fk.aho_id,
+    )) as Savings;
+
+    const savingTransactions = {
+      trasac_nombre: savingFound.aho_nombre,
+      trasac_descripcion: `Trasanccion destina para el ahorro ${savingFound.aho_nombre}`,
+      trasac_cantidad: savingUpdate.amount,
+      cuenta_id_fk: savingUpdate.cuenta_id_fk,
+      ttrac_id_fk: savingUpdate.ttrac_id_fk,
+      aho_id_fk: savingUpdate.aho_id_fk,
+    };
+    await this.transactionsServices.createTransaction(savingTransactions);
+
+    const amountTotal =
+      parseFloat(savingFound.aho_cantidad_total.toString()) +
+      savingUpdate.amount;
+    // console.log(amountTotal);
+    return await this.savingsRepository.update(savingUpdate.aho_id_fk.aho_id, {
+      aho_cantidad_total: amountTotal,
+    });
+  }
   async createSavings(saving: CreateSavingsDto) {
     const accountFound = (await this.userServices.getAccount(
       saving.cuenta_id_fk.cuenta_id,
@@ -47,6 +72,14 @@ export class SavingsService {
   createIDSaving(AccountID: string, numberSaving: number) {
     const savingID = AccountID.substring(10, 12) + 'AHO' + numberSaving;
     return savingID;
+  }
+
+  async getSaving(savingID: string) {
+    const savingFound = (await this.savingsRepository.findOne({
+      where: { aho_id: savingID },
+    })) as Savings;
+
+    return savingFound;
   }
   async getAllSavings(AccountID: string) {
     const savingsFound = (await this.savingsRepository.find({

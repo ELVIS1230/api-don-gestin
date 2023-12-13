@@ -22,13 +22,16 @@ export class Savings {
   @Column({ type: 'varchar' })
   aho_descripcion: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  aho_duracion: string;
+
   @Column({ type: 'decimal' })
   aho_meta_cantidad: number;
 
   @Column({ type: 'decimal' })
   aho_cantidad_total: number;
 
-  @ManyToOne(() => Accounts, (acount) => acount.savings)
+  @ManyToOne(() => Accounts, (account) => account.savings)
   @JoinColumn({
     name: 'cuenta_id_fk',
     foreignKeyConstraintName: 'cuenta_fk',

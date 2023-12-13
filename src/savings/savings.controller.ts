@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateSavingsDto } from 'src/dto/create-savings.dto';
 import { SavingsService } from './savings.service';
+import { SavingUpdateDto } from 'src/dto/saving-update.dto';
 
 @Controller('savings')
 export class SavingsController {
@@ -13,5 +14,10 @@ export class SavingsController {
   @Post()
   createSaving(@Body() saving: CreateSavingsDto) {
     return this.savingsServices.createSavings(saving);
+  }
+
+  @Patch('/amount')
+  updateAmountSaving(@Body() savingUpdate: SavingUpdateDto) {
+    return this.savingsServices.updateAmountSaving(savingUpdate);
   }
 }
