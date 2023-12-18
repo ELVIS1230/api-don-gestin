@@ -187,6 +187,7 @@ export class RemindersService {
   async getAllRemindersForUser(cedula: string) {
     const remindersFound = (await this.remindersRepository.find({
       where: { u_cedula_fk: { u_cedula: cedula } },
+      order: { record_fecha: 'DESC' },
     })) as Reminders[];
     return remindersFound;
   }

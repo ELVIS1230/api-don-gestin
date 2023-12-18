@@ -171,9 +171,9 @@ export class TransactionsService {
     const pdfBuffer: Buffer = await new Promise((resolve) => {
       const doc = new PDFDocument();
 
-      doc.text('PDF generado');
+      doc.text('Tus transacciones en un pdf');
       doc.moveDown();
-      doc.text('Ejemplo con next js');
+      doc.text(`${userFound.u_nombre} ${userFound.u_apellido}`);
 
       const table = {
         headers: ['Trasaccion', 'Nombre', 'Cantidad', 'Total'],
