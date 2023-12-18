@@ -18,6 +18,10 @@ export class TransactionsController {
   getTransactions(@Param('id') id: string) {
     return this.transactionsService.getAllTransactions(id);
   }
+  @Get('cards/:id')
+  getTransactionsWithCards(@Param('id') id: string) {
+    return this.transactionsService.getTansactionsCardsWithCards(id);
+  }
 
   @Get(':id/incomes')
   getTransactionsIncomes(@Param('id') id: string) {
@@ -26,6 +30,16 @@ export class TransactionsController {
   @Get(':id/expenses')
   getTransactionsExpenses(@Param('id') id: string) {
     return this.transactionsService.getTransactionExpenses(id);
+  }
+
+  @Get('/oneCard/transactions/:cardID')
+  getTransactionsOneCard(@Param('cardID') cardID: string) {
+    return this.transactionsService.getTansactionsCardsOneCard(cardID);
+  }
+
+  @Get('/dash/:id')
+  getDash(@Param('id') id: string) {
+    return this.transactionsService.dataDash(id);
   }
 
   @Get('/reports/:idUser')

@@ -84,6 +84,7 @@ export class CardsService {
   async getAllCards(cuentaID: string) {
     const cardsFounds = await this.cardsRepository.find({
       where: { cuenta_id_fk: { cuenta_id: cuentaID } },
+      relations: ['tiptarj_id_fk', 'mtarj_id_fk'],
     });
 
     return cardsFounds
