@@ -81,6 +81,10 @@ export class SavingsService {
 
     return savingFound;
   }
+  async deleteSaving(savingID: string) {
+    const savingDelete = this.savingsRepository.delete(savingID);
+    return savingDelete;
+  }
   async getAllSavings(AccountID: string) {
     const savingsFound = (await this.savingsRepository.find({
       where: { cuenta_id_fk: { cuenta_id: AccountID } },

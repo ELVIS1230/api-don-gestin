@@ -48,6 +48,10 @@ export class TransactionsService {
       ? new HttpException('Transacciones no encontradas', HttpStatus.NOT_FOUND)
       : transactionsFound;
   }
+  deleteTransaction(transactionID: string) {
+    const transactionsFound = this.transactionsRepository.delete(transactionID);
+    return transactionsFound;
+  }
   getTransactionExpenses(cuentaID: string) {
     const transactionsFound = this.transactionsRepository.find({
       where: {
