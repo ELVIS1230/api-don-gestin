@@ -11,6 +11,7 @@ import { Users } from 'src/users/users.entity';
 // import * as PDFDocument from 'pdfkit';
 // import 'pdfkit-tables';
 import PDFDocument from 'pdfkit-table';
+// import { SavingsService } from 'src/savings/savings.service';
 // import { PDFDocument } from 'pdfkit';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class TransactionsService {
     @InjectRepository(Transactions)
     private transactionsRepository: Repository<Transactions>,
     private usersServices: UsersService,
-    private cardsService: CardsService,
+    private cardsService: CardsService, // private savingsService: SavingsService,
   ) {}
 
   getAllTransactions(cuentaID_fk: string) {
@@ -46,6 +47,10 @@ export class TransactionsService {
     return !transactionsFound
       ? new HttpException('Transacciones no encontradas', HttpStatus.NOT_FOUND)
       : transactionsFound;
+  }
+  deleteTransaction(transactionID: string) {
+    const transactionsFound = this.transactionsRepository.delete(transactionID);
+    return transactionsFound;
   }
   getTransactionExpenses(cuentaID: string) {
     const transactionsFound = this.transactionsRepository.find({
@@ -170,9 +175,9 @@ export class TransactionsService {
     const pdfBuffer: Buffer = await new Promise((resolve) => {
       const doc = new PDFDocument();
 
-      doc.text('PDF generado');
+      doc.text('Tus transacciones en un pdf');
       doc.moveDown();
-      doc.text('Ejemplo con next js');
+      doc.text(`${userFound.u_nombre} ${userFound.u_apellido}`);
 
       const table = {
         headers: ['Trasaccion', 'Nombre', 'Cantidad', 'Total'],
@@ -196,4 +201,93 @@ export class TransactionsService {
 
     return pdfBuffer;
   }
+
+  async dataDash(accountID: string) {
+    const resultados = await this.transactionsRepository
+      .createQueryBuilder('trasacciones')
+      .select([
+        'EXTRACT(MONTH FROM "createdAt") as month',
+        'EXTRACT(YEAR FROM "createdAt") as year',
+        'ttrac_id_fk',
+        'SUM(trasac_cantidad) as total_amount',
+      ])
+      .where('trasacciones.cuenta_id_fk = :cuenta_id', {
+        cuenta_id: accountID,
+      })
+      .groupBy('year, month, ttrac_id_fk')
+      .orderBy('year, month, ttrac_id_fk')
+      .getRawMany();
+
+    const resumen = {};
+    resultados.forEach((resultado) => {
+      const mes = resultado.month;
+      const tipoTransaccion = resultado.ttrac_id_fk;
+      const totalCantidad = parseFloat(resultado.total_amount);
+
+      if (!resumen[mes]) {
+        resumen[mes] = { 1: 0, 2: 0, 3: 0 };
+      }
+
+      resumen[mes][tipoTransaccion] = totalCantidad;
+    });
+
+    // Llenar con 0 los meses sin registros
+    for (let i = 1; i <= 12; i++) {
+      if (!resumen[i]) {
+        resumen[i] = { 1: 0, 2: 0, 3: 0 };
+      }
+    }
+    const dasTransactions = await this.getDashTransactions(accountID);
+    const dashCardsTransactions =
+      await this.getDashTransactionsCards(accountID);
+    return {
+      comparaciones: resumen,
+      trasacciones: dasTransactions,
+      tarjetas: dashCardsTransactions,
+    };
+  }
+  async getDashTransactions(accountID: string) {
+    const registros = await this.transactionsRepository.find({
+      where: { cuenta_id_fk: { cuenta_id: accountID } },
+      order: { createdAt: 'DESC' },
+      take: 2,
+      relations: ['ttrac_id_fk', 'cuenta_id_fk'],
+    });
+    return registros;
+  }
+
+  async getDashTransactionsCards(accountID: string) {
+    const registros = await this.transactionsRepository.find({
+      where: {
+        tarj_id_fk: { cuenta_id_fk: { cuenta_id: accountID } },
+      },
+      order: { createdAt: 'DESC' },
+      take: 2,
+      relations: ['ttrac_id_fk', 'cuenta_id_fk', 'tarj_id_fk'],
+    });
+    return registros;
+  }
+  async getTansactionsCardsWithCards(accountID: string) {
+    const registros = await this.transactionsRepository.find({
+      where: {
+        tarj_id_fk: { cuenta_id_fk: { cuenta_id: accountID } },
+      },
+      order: { createdAt: 'DESC' },
+      relations: ['ttrac_id_fk', 'cuenta_id_fk', 'tarj_id_fk'],
+    });
+    return registros;
+  }
+  async getTansactionsCardsOneCard(cardID: string) {
+    const registros = await this.transactionsRepository.find({
+      where: {
+        tarj_id_fk: { tarj_id: cardID },
+      },
+      order: { createdAt: 'DESC' },
+      relations: ['ttrac_id_fk', 'tarj_id_fk'],
+    });
+    return registros;
+  }
 }
+
+// async getDashReminders(){}
+// }

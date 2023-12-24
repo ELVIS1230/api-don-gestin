@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { CreateTransactionDto } from 'src/dto/create-transactions.dto';
 import { TransactionsService } from './transactions.service';
 
@@ -13,10 +21,17 @@ export class TransactionsController {
   createTransactionWithCard(@Body() transaction: CreateTransactionDto) {
     return this.transactionsService.createTrasanctionWithCard(transaction);
   }
-
+  @Delete(':id')
+  deleteTransaction(@Param('id') id: string) {
+    return this.transactionsService.deleteTransaction(id);
+  }
   @Get(':id')
   getTransactions(@Param('id') id: string) {
     return this.transactionsService.getAllTransactions(id);
+  }
+  @Get('cards/:id')
+  getTransactionsWithCards(@Param('id') id: string) {
+    return this.transactionsService.getTansactionsCardsWithCards(id);
   }
 
   @Get(':id/incomes')
@@ -26,6 +41,16 @@ export class TransactionsController {
   @Get(':id/expenses')
   getTransactionsExpenses(@Param('id') id: string) {
     return this.transactionsService.getTransactionExpenses(id);
+  }
+
+  @Get('/oneCard/transactions/:cardID')
+  getTransactionsOneCard(@Param('cardID') cardID: string) {
+    return this.transactionsService.getTansactionsCardsOneCard(cardID);
+  }
+
+  @Get('/dash/:id')
+  getDash(@Param('id') id: string) {
+    return this.transactionsService.dataDash(id);
   }
 
   @Get('/reports/:idUser')

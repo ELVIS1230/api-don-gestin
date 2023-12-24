@@ -11,6 +11,11 @@ export class UsersController {
     return this.usersService.createUsers(newUser);
   }
 
+  @Post('/login')
+  loginUser(@Body() userLogin: { email: string; password: string }) {
+    return this.usersService.loginUser(userLogin);
+  }
+
   @Get(':id')
   getUser(@Param('id') id: string) {
     return this.usersService.getUser(id);
@@ -20,5 +25,4 @@ export class UsersController {
   getAccount(@Param('id') id: string) {
     return this.usersService.getAccount(id);
   }
-  
 }

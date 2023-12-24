@@ -184,9 +184,14 @@ export class RemindersService {
   //   const remindersFound = (await this.remindersRepository.find()) as Reminders[];
   //   return remindersFound;
   // }
+  async deleteReminder(reminderID: string) {
+    const remindersDelete = this.remindersRepository.delete(reminderID);
+    return remindersDelete;
+  }
   async getAllRemindersForUser(cedula: string) {
     const remindersFound = (await this.remindersRepository.find({
       where: { u_cedula_fk: { u_cedula: cedula } },
+      order: { record_fecha: 'DESC' },
     })) as Reminders[];
     return remindersFound;
   }

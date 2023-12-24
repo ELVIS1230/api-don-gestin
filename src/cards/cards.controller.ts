@@ -23,7 +23,7 @@ export class CardsController {
   //   return this.cardsServices.verifyCards();
   // }
 
-  @Get(':id')
+  @Get('/one/:id')
   getCard(@Param('id') id: string) {
     return this.cardsServices.getCard(id);
   }
