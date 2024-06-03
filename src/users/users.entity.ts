@@ -10,29 +10,29 @@ import {
 import { Accounts } from './accounts.entity';
 import { Reminders } from 'src/reminders/reminders.entity';
 
-@Entity('usuarios')
-@Unique('correo_unico', ['u_correo'])
-@Unique('cuenta_id_unica', ['cuenta_id_fk'])
+@Entity('users')
+@Unique('single_mail', ['u_email'])
+@Unique('account_id_unica', ['fk_id_accountt'])
 export class Users {
   @PrimaryColumn({
     type: 'varchar',
     length: '10',
     unique: true,
-    primaryKeyConstraintName: 'u_cedula_pk',
+    primaryKeyConstraintName: 'u_identification_pk',
   })
-  u_cedula: string;
+  u_identification: string;
 
   @Column({ type: 'varchar', length: '25' })
-  u_nombre: string;
+  u_name: string;
 
   @Column({ type: 'varchar', length: '10' })
-  u_apellido: string;
+  u_lastname: string;
 
   @Column({ type: 'varchar', length: '40' })
-  u_correo: string;
+  u_email: string;
 
   @Column({ type: 'varchar', length: '30' })
-  u_contraseña: string;
+  u_password: string;
 
   @Column({
     type: 'timestamptz',
@@ -42,12 +42,12 @@ export class Users {
 
   @OneToOne(() => Accounts)
   @JoinColumn({
-    name: 'cuenta_id_fk',
-    // referencedColumnName: 'cuenta_id',
-    foreignKeyConstraintName: 'cuenta_id_fk',
+    name: 'fk_id_account',
+    // referencedColumnName: 'account_id',
+    foreignKeyConstraintName: 'fk_id_account',
   })
-  cuenta_id_fk: Accounts;
+  fk_id_accountt: Accounts;
 
-  @OneToMany(() => Reminders, (reminder) => reminder.u_cedula_fk)
+  @OneToMany(() => Reminders, (reminder) => reminder.u_identification_fk)
   reminders: Reminders[];
 }

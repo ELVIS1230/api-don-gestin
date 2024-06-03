@@ -11,35 +11,35 @@ import { CardsBrands } from './entities/cardBrand.entity';
 import { Accounts } from 'src/users/accounts.entity';
 import { Transactions } from 'src/transactions/transactions.entity';
 
-@Entity('tarjetas')
+@Entity('cards')
 export class Cards {
   @PrimaryColumn({
-    primaryKeyConstraintName: 'tarjetas_pk',
+    primaryKeyConstraintName: 'cards_pk',
     type: 'varchar',
     length: 9,
   })
   tarj_id: string;
 
   @Column({ type: 'varchar', length: '25' })
-  tarj_nombre: string;
+  card_name: string;
 
   @Column({ type: 'varchar', length: '75' })
-  tarj_descripcion: string;
+  card_description: string;
 
   @Column({ type: 'decimal', nullable: true })
-  tarj_cupo: number;
+  quota_card: number;
 
   @Column({ type: 'decimal' })
-  tarj_saldo_total: number;
+  total_balance_card: number;
 
   @Column({ type: 'decimal', nullable: true })
-  tarj_saldo_pagar: number;
+  card_balance_pay: number;
 
   @Column({ type: 'date', nullable: true })
-  tarj_fecha_corte: Date;
+  cut_date_card: Date;
 
   @Column({ type: 'date', nullable: true })
-  tarj_fecha_vencimiento: Date;
+  expiration_date_card: Date;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -53,8 +53,8 @@ export class Cards {
   mtarj_id_fk: CardsBrands;
 
   @ManyToOne(() => Accounts, (account) => account.cards)
-  @JoinColumn({ foreignKeyConstraintName: 'cuenta_fk', name: 'cuenta_id_fk' })
-  cuenta_id_fk: Accounts;
+  @JoinColumn({ foreignKeyConstraintName: 'fk_account', name: 'fk_id_account' })
+  fk_id_account: Accounts;
 
   @OneToMany(() => Accounts, (account) => account.cards)
   transactions: Transactions;

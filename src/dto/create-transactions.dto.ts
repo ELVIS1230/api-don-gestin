@@ -4,13 +4,13 @@ import { Accounts } from 'src/users/accounts.entity';
 // import { Transaction } from 'typeorm';
 
 export class CreateTransactionDto {
-  trasac_nombre: string;
-  trasac_descripcion: string;
-  trasac_cantidad: number;
-  trasac_saldo?: number;
-  trasac_fecha?: Date;
+  transfer_name: string;
+  transfer_description: string;
+  transfer_quantity: number;
+  transfer_balance?: number;
+  transfer_date?: Date;
   ttrac_id_fk: TypeTrasanctions;
-  cuenta_id_fk?: Accounts;
+  fk_id_account?: Accounts;
   tarj_id_fk?: Cards;
   aho_id_fk?: any;
 }

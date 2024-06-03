@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Transactions } from './transactions.entity';
 
-@Entity('tipo_trasacciones')
+@Entity('tipo_Transactions')
 export class TypeTrasanctions {
   @PrimaryColumn({
     primaryKeyConstraintName: 'ttrac_id_pk',
@@ -10,10 +10,10 @@ export class TypeTrasanctions {
   ttrac_id: number;
 
   @Column({ type: 'varchar', length: '25' })
-  ttracc_nombre: string;
+  ttracc_name: string;
 
   @Column({ type: 'varchar', length: '60' })
-  ttrac_descripcion: string;
+  ttrac_description: string;
 
   @OneToMany(() => Transactions, (transactions) => transactions.ttrac_id_fk)
   transactions: Transactions[];

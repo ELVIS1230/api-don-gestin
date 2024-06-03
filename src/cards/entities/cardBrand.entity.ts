@@ -1,13 +1,13 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Cards } from '../cards.entity';
 
-@Entity('marca_tarjetas')
+@Entity('card_brand')
 export class CardsBrands {
-  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'marca_tarjetas_pk' })
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'card_brand_pk' })
   mtarj_id: number;
 
   @Column({ type: 'varchar', length: '25' })
-  mtarj_nombre: string;
+  mtarj_name: string;
 
   @Column({ type: 'varchar', length: '50', nullable: true })
   mtarj_logo: string;

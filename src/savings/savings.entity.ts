@@ -12,31 +12,31 @@ import {
 @Entity('ahorros')
 export class Savings {
   @PrimaryColumn({
-    primaryKeyConstraintName: 'ahorro_pk',
+    primaryKeyConstraintName: 'saving_pk',
   })
   aho_id: string;
 
   @Column({ type: 'varchar' })
-  aho_nombre: string;
+  aho_name: string;
 
   @Column({ type: 'varchar' })
-  aho_descripcion: string;
+  aho_description: string;
 
   @Column({ type: 'varchar', nullable: true })
-  aho_duracion: string;
+  aho_duration: string;
 
   @Column({ type: 'decimal' })
-  aho_meta_cantidad: number;
+  aho_meta_quantity: number;
 
   @Column({ type: 'decimal' })
-  aho_cantidad_total: number;
+  aho_total_amount: number;
 
   @ManyToOne(() => Accounts, (account) => account.savings)
   @JoinColumn({
-    name: 'cuenta_id_fk',
-    foreignKeyConstraintName: 'cuenta_fk',
+    name: 'fk_id_account',
+    foreignKeyConstraintName: 'fk_account',
   })
-  cuenta_id_fk: Accounts;
+  fk_id_account: Accounts;
 
   @OneToMany(() => Transactions, (transaction) => transaction.aho_id_fk)
   trasactions: Transactions[];

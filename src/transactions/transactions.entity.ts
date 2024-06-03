@@ -10,25 +10,25 @@ import { Accounts } from 'src/users/accounts.entity';
 import { Cards } from 'src/cards/cards.entity';
 import { Savings } from 'src/savings/savings.entity';
 
-@Entity('trasacciones')
+@Entity('Transactions')
 export class Transactions {
   @PrimaryGeneratedColumn({
-    primaryKeyConstraintName: 'trasacciones_pk',
+    primaryKeyConstraintName: 'transactions_pk',
     type: 'integer',
   })
   trasac_id: number;
 
   @Column()
-  trasac_nombre: string;
+  transfer_name: string;
 
   @Column()
-  trasac_descripcion: string;
+  transfer_description: string;
 
   @Column({ type: 'decimal' })
-  trasac_cantidad: number;
+  transfer_quantity: number;
 
   @Column({ type: 'decimal' })
-  trasac_saldo: number;
+  transfer_balance: number;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -42,10 +42,10 @@ export class Transactions {
 
   @ManyToOne(() => Accounts, (account) => account.transactions)
   @JoinColumn({
-    name: 'cuenta_id_fk',
-    foreignKeyConstraintName: 'cuenta_fk',
+    name: 'fk_id_account',
+    foreignKeyConstraintName: 'fk_account',
   })
-  cuenta_id_fk: Accounts;
+  fk_id_account: Accounts;
 
   @ManyToOne(() => Cards, (card) => card.transactions)
   @JoinColumn({

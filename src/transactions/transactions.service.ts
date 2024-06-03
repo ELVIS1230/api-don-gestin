@@ -23,62 +23,62 @@ export class TransactionsService {
     private cardsService: CardsService, // private savingsService: SavingsService,
   ) {}
 
-  getAllTransactions(cuentaID_fk: string) {
+  getAllTransactions(accountID_fk: string) {
     const transactionsFound = this.transactionsRepository.find({
       where: {
-        cuenta_id_fk: { cuenta_id: cuentaID_fk },
+        fk_id_account: { account_id: accountID_fk },
       },
-      relations: ['cuenta_id_fk', 'ttrac_id_fk'],
+      relations: ['fk_id_account', 'ttrac_id_fk'],
     });
 
     return !transactionsFound
-      ? new HttpException('Transacciones no encotradas', HttpStatus.NOT_FOUND)
+      ? new HttpException('Transactions not found', HttpStatus.NOT_FOUND)
       : transactionsFound;
   }
 
-  getTransactionIncomes(cuentaID: string) {
+  getTransactionIncomes(accountID: string) {
     const transactionsFound = this.transactionsRepository.find({
       where: {
-        cuenta_id_fk: { cuenta_id: cuentaID },
+        fk_id_account: { account_id: accountID },
         ttrac_id_fk: { ttrac_id: 1 },
       },
       relations: ['ttrac_id_fk'],
     });
     return !transactionsFound
-      ? new HttpException('Transacciones no encontradas', HttpStatus.NOT_FOUND)
+      ? new HttpException('Transactions not found', HttpStatus.NOT_FOUND)
       : transactionsFound;
   }
   deleteTransaction(transactionID: string) {
     const transactionsFound = this.transactionsRepository.delete(transactionID);
     return transactionsFound;
   }
-  getTransactionExpenses(cuentaID: string) {
+  getTransactionExpenses(accountID: string) {
     const transactionsFound = this.transactionsRepository.find({
       where: {
-        cuenta_id_fk: { cuenta_id: cuentaID },
+        fk_id_account: { account_id: accountID },
         ttrac_id_fk: { ttrac_id: 2 },
       },
       relations: ['ttrac_id_fk'],
     });
     return !transactionsFound
-      ? new HttpException('Transacciones no encontradas', HttpStatus.NOT_FOUND)
+      ? new HttpException('Transactions not found', HttpStatus.NOT_FOUND)
       : transactionsFound;
   }
 
   async createTransaction(transaction: CreateTransactionDto) {
     const accountFound = (await this.usersServices.getAccount(
-      transaction.cuenta_id_fk.cuenta_id,
+      transaction.fk_id_account.account_id,
     )) as Accounts;
 
     if (accountFound instanceof HttpException) {
-      return new HttpException('Cuenta no encontrada ', HttpStatus.NOT_FOUND);
+      return new HttpException('Account not found ', HttpStatus.NOT_FOUND);
     } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
       if (
-        accountFound.cuenta_saldo <= 0.0 ||
-        accountFound.cuenta_saldo < transaction.trasac_cantidad
+        accountFound.account_balance <= 0.0 ||
+        accountFound.account_balance < transaction.transfer_quantity
       ) {
         return new HttpException(
-          'La trasanccion supera el valor de su cuenta',
+          'The transaction exceeds the value of your account',
           HttpStatus.CONFLICT,
         );
       }
@@ -87,28 +87,28 @@ export class TransactionsService {
     let balanceTotal: number = 0;
     if (transaction.ttrac_id_fk.ttrac_id === 1) {
       await this.usersServices.incrementBalanceAccount(
-        transaction.cuenta_id_fk.cuenta_id,
-        transaction.trasac_cantidad,
+        transaction.fk_id_account.account_id,
+        transaction.transfer_quantity,
       );
       balanceTotal =
-        parseFloat(accountFound.cuenta_saldo.toString()) +
-        transaction.trasac_cantidad;
+        parseFloat(accountFound.account_balance.toString()) +
+        transaction.transfer_quantity;
     } else if (
       transaction.ttrac_id_fk.ttrac_id === 2 ||
       transaction.ttrac_id_fk.ttrac_id === 3
     ) {
       await this.usersServices.decrementBalanceAccount(
-        transaction.cuenta_id_fk.cuenta_id,
-        transaction.trasac_cantidad,
+        transaction.fk_id_account.account_id,
+        transaction.transfer_quantity,
       );
       balanceTotal =
-        parseFloat(accountFound.cuenta_saldo.toString()) -
-        transaction.trasac_cantidad;
+        parseFloat(accountFound.account_balance.toString()) -
+        transaction.transfer_quantity;
     }
 
     const newTrasanction = this.transactionsRepository.create({
       ...transaction,
-      trasac_saldo: balanceTotal,
+      transfer_balance: balanceTotal,
     });
 
     return await this.transactionsRepository.save(newTrasanction);
@@ -120,14 +120,14 @@ export class TransactionsService {
     )) as Cards;
 
     if (cardFound instanceof HttpException) {
-      return new HttpException('Tarjeta no encontrada ', HttpStatus.NOT_FOUND);
+      return new HttpException('Card not found ', HttpStatus.NOT_FOUND);
     } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
       if (
-        cardFound.tarj_saldo_total <= 0.0 ||
-        cardFound.tarj_saldo_total < transaction.trasac_cantidad
+        cardFound.total_balance_card <= 0.0 ||
+        cardFound.total_balance_card < transaction.transfer_quantity
       ) {
         return new HttpException(
-          'La trasanccion supera el valor disponible de su tarjeta',
+          'The transaction exceeds the available value of your card',
           HttpStatus.CONFLICT,
         );
       }
@@ -137,26 +137,26 @@ export class TransactionsService {
     if (transaction.ttrac_id_fk.ttrac_id === 1) {
       await this.cardsService.incrementBalanceCard(
         transaction.tarj_id_fk.tarj_id,
-        transaction.trasac_cantidad,
+        transaction.transfer_quantity,
       );
 
       balanceTotal =
-        parseFloat(cardFound.tarj_saldo_total.toString()) +
-        transaction.trasac_cantidad;
+        parseFloat(cardFound.total_balance_card.toString()) +
+        transaction.transfer_quantity;
     } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
       await this.cardsService.decrementBalanceCard(
         transaction.tarj_id_fk.tarj_id,
-        transaction.trasac_cantidad,
+        transaction.transfer_quantity,
       );
 
       balanceTotal =
-        parseFloat(cardFound.tarj_saldo_total.toString()) -
-        transaction.trasac_cantidad;
+        parseFloat(cardFound.total_balance_card.toString()) -
+        transaction.transfer_quantity;
     }
 
     const newTrasanction = this.transactionsRepository.create({
       ...transaction,
-      trasac_saldo: balanceTotal,
+      transfer_balance: balanceTotal,
     });
 
     // console.log(cardFound);
@@ -166,26 +166,26 @@ export class TransactionsService {
 
   async createReports(userID: string): Promise<Buffer> {
     const userFound = (await this.usersServices.getUser(userID)) as Users;
-    console.log(userFound.cuenta_id_fk.cuenta_id);
+    console.log(userFound.fk_id_account.account_id);
 
     const transactionsFound = (await this.getAllTransactions(
-      userFound.cuenta_id_fk.cuenta_id,
+      userFound.fk_id_account.account_id,
     )) as Transactions[];
     console.log(transactionsFound);
     const pdfBuffer: Buffer = await new Promise((resolve) => {
       const doc = new PDFDocument();
 
-      doc.text('Tus transacciones en un pdf');
+      doc.text('Your transactions in a pdf');
       doc.moveDown();
-      doc.text(`${userFound.u_nombre} ${userFound.u_apellido}`);
+      doc.text(`${userFound.u_name} ${userFound.u_lastname}`);
 
       const table = {
-        headers: ['Trasaccion', 'Nombre', 'Cantidad', 'Total'],
+        headers: ['Transaction', 'Name', 'Amount', 'Total'],
         rows: transactionsFound.map((transaction) => [
-          transaction.ttrac_id_fk.ttracc_nombre,
-          transaction.trasac_nombre,
-          transaction.trasac_cantidad.toString(),
-          transaction.trasac_saldo.toString(),
+          transaction.ttrac_id_fk.ttracc_name,
+          transaction.transfer_name,
+          transaction.transfer_quantity.toString(),
+          transaction.transfer_balance.toString(),
         ]),
       };
       doc.moveDown().table(table, { width: 400 });
@@ -203,32 +203,32 @@ export class TransactionsService {
   }
 
   async dataDash(accountID: string) {
-    const resultados = await this.transactionsRepository
-      .createQueryBuilder('trasacciones')
+    const results = await this.transactionsRepository
+      .createQueryBuilder('transactions')
       .select([
         'EXTRACT(MONTH FROM "createdAt") as month',
         'EXTRACT(YEAR FROM "createdAt") as year',
         'ttrac_id_fk',
-        'SUM(trasac_cantidad) as total_amount',
+        'SUM(transfer_quantity) as total_amount',
       ])
-      .where('trasacciones.cuenta_id_fk = :cuenta_id', {
-        cuenta_id: accountID,
+      .where('Transactions.fk_id_account = :account_id', {
+        account_id: accountID,
       })
       .groupBy('year, month, ttrac_id_fk')
       .orderBy('year, month, ttrac_id_fk')
       .getRawMany();
 
     const resumen = {};
-    resultados.forEach((resultado) => {
-      const mes = resultado.month;
-      const tipoTransaccion = resultado.ttrac_id_fk;
-      const totalCantidad = parseFloat(resultado.total_amount);
+    results.forEach((result) => {
+      const mes = result.month;
+      const tipoTransaccion = result.ttrac_id_fk;
+      const totalAmount = parseFloat(result.total_amount);
 
       if (!resumen[mes]) {
         resumen[mes] = { 1: 0, 2: 0, 3: 0 };
       }
 
-      resumen[mes][tipoTransaccion] = totalCantidad;
+      resumen[mes][tipoTransaccion] = totalAmount;
     });
 
     // Llenar con 0 los meses sin registros
@@ -242,16 +242,16 @@ export class TransactionsService {
       await this.getDashTransactionsCards(accountID);
     return {
       comparaciones: resumen,
-      trasacciones: dasTransactions,
-      tarjetas: dashCardsTransactions,
+      Transactions: dasTransactions,
+      cards: dashCardsTransactions,
     };
   }
   async getDashTransactions(accountID: string) {
     const registros = await this.transactionsRepository.find({
-      where: { cuenta_id_fk: { cuenta_id: accountID } },
+      where: { fk_id_account: { account_id: accountID } },
       order: { createdAt: 'DESC' },
       take: 2,
-      relations: ['ttrac_id_fk', 'cuenta_id_fk'],
+      relations: ['ttrac_id_fk', 'fk_id_account'],
     });
     return registros;
   }
@@ -259,21 +259,21 @@ export class TransactionsService {
   async getDashTransactionsCards(accountID: string) {
     const registros = await this.transactionsRepository.find({
       where: {
-        tarj_id_fk: { cuenta_id_fk: { cuenta_id: accountID } },
+        tarj_id_fk: { fk_id_account: { account_id: accountID } },
       },
       order: { createdAt: 'DESC' },
       take: 2,
-      relations: ['ttrac_id_fk', 'cuenta_id_fk', 'tarj_id_fk'],
+      relations: ['ttrac_id_fk', 'fk_id_account', 'tarj_id_fk'],
     });
     return registros;
   }
   async getTansactionsCardsWithCards(accountID: string) {
     const registros = await this.transactionsRepository.find({
       where: {
-        tarj_id_fk: { cuenta_id_fk: { cuenta_id: accountID } },
+        tarj_id_fk: { fk_id_account: { account_id: accountID } },
       },
       order: { createdAt: 'DESC' },
-      relations: ['ttrac_id_fk', 'cuenta_id_fk', 'tarj_id_fk'],
+      relations: ['ttrac_id_fk', 'fk_id_account', 'tarj_id_fk'],
     });
     return registros;
   }
