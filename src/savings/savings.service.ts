@@ -19,34 +19,37 @@ export class SavingsService {
   // async updateAmountSaving(savingUpdate: { savingID: string; amount: number }) {
   async updateAmountSaving(savingUpdate: SavingUpdateDto) {
     const savingFound = (await this.getSaving(
-      savingUpdate.aho_id_fk.aho_id,
+      savingUpdate.saving_id_fk.aho_id,
     )) as Savings;
 
     const savingTransactions = {
-      trasac_nombre: savingFound.aho_nombre,
-      trasac_descripcion: `Trasanccion destina para el ahorro ${savingFound.aho_nombre}`,
-      trasac_cantidad: savingUpdate.amount,
-      cuenta_id_fk: savingUpdate.cuenta_id_fk,
+      trasac_name: savingFound.saving_name,
+      trasac_description: `Trasanccion destina para el ahorro ${savingFound.saving_name}`,
+      trasac_quantity: savingUpdate.amount,
+      account_id_fk: savingUpdate.account_id_fk,
       ttrac_id_fk: savingUpdate.ttrac_id_fk,
-      aho_id_fk: savingUpdate.aho_id_fk,
+      saving_id_fk: savingUpdate.saving_id_fk,
     };
     await this.transactionsServices.createTransaction(savingTransactions);
 
     const amountTotal =
-      parseFloat(savingFound.aho_cantidad_total.toString()) +
+      parseFloat(savingFound.saving_quantity_total.toString()) +
       savingUpdate.amount;
     // console.log(amountTotal);
-    return await this.savingsRepository.update(savingUpdate.aho_id_fk.aho_id, {
-      aho_cantidad_total: amountTotal,
-    });
+    return await this.savingsRepository.update(
+      savingUpdate.saving_id_fk.aho_id,
+      {
+        saving_quantity_total: amountTotal,
+      },
+    );
   }
   async createSavings(saving: CreateSavingsDto) {
     const accountFound = (await this.userServices.getAccount(
-      saving.cuenta_id_fk.cuenta_id,
+      saving.account_id_fk.account_id,
     )) as Accounts;
 
     const savingID = this.createIDSaving(
-      saving.cuenta_id_fk.cuenta_id,
+      saving.account_id_fk.account_id,
       accountFound.savings.length,
     );
 
@@ -57,12 +60,12 @@ export class SavingsService {
 
     await this.savingsRepository.save(newSavings);
     const savingTransactions = {
-      trasac_nombre: saving.aho_nombre,
-      trasac_descripcion: `Trasanccion destina para el ahorro ${saving.aho_nombre}`,
-      trasac_cantidad: saving.aho_cantidad_total,
-      cuenta_id_fk: saving.cuenta_id_fk,
+      trasac_name: saving.saving_name,
+      trasac_description: `Trasanccion destina para el ahorro ${saving.saving_name}`,
+      trasac_quantity: saving.saving_quantity_total,
+      account_id_fk: saving.account_id_fk,
       ttrac_id_fk: saving.ttrac_id_fk,
-      aho_id_fk: savingID,
+      saving_id_fk: savingID,
     };
 
     await this.transactionsServices.createTransaction(savingTransactions);
@@ -87,7 +90,7 @@ export class SavingsService {
   }
   async getAllSavings(AccountID: string) {
     const savingsFound = (await this.savingsRepository.find({
-      where: { cuenta_id_fk: { cuenta_id: AccountID } },
+      where: { account_id_fk: { account_id: AccountID } },
     })) as Savings[];
 
     return savingsFound;

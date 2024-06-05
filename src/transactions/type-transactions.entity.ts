@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Transactions } from './transactions.entity';
 
-@Entity('tipo_trasacciones')
+@Entity('type_trasanctions')
 export class TypeTrasanctions {
   @PrimaryColumn({
     primaryKeyConstraintName: 'ttrac_id_pk',

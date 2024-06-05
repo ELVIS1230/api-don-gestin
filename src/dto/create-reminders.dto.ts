@@ -1,8 +1,8 @@
 import { Users } from 'src/users/users.entity';
 
 export class CreateRemindersDto {
-  record_nombre: string;
-  record_description: string;
-  record_fecha: string;
+  remind_name: string;
+  remind_description: string;
+  remind_date: string;
   u_cedula_fk: Users;
 }

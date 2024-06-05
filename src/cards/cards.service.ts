@@ -26,21 +26,21 @@ export class CardsService {
 
   async verifyCards() {
     const cards = (await this.getAllCardsCredit()) as Cards[];
-    const tarjetasActualizadas: Cards[] = [];
+    const cardsUpdate: Cards[] = [];
     for (const card of cards) {
       if (await this.verifyDueCard(card.tarj_id)) {
         await this.updateDateDueDate(card.tarj_id);
         await this.updateDateCutoffDate(card.tarj_id);
-        tarjetasActualizadas.push(card);
+        cardsUpdate.push(card);
       }
     }
-    return tarjetasActualizadas;
+    return cardsUpdate;
   }
 
   async verifyDueCard(CardID: string): Promise<boolean> {
     const cardFound = (await this.getCard(CardID)) as Cards;
     const today = dayjs().format('YYYY-MM-DD');
-    if (cardFound.tarj_fecha_vencimiento.toString() === today) {
+    if (cardFound.card_date_due.toString() === today) {
       console.log(today);
       return true;
     } else {
@@ -50,28 +50,28 @@ export class CardsService {
 
   async updateDateCutoffDate(CardID: string) {
     const cardFound = (await this.getCard(CardID)) as Cards;
-    const updateCardDate = dayjs(cardFound.tarj_fecha_corte, 'YYYY-MM-DD')
+    const updateCardDate = dayjs(cardFound.card_date_cutoff, 'YYYY-MM-DD')
       .add(1, 'month')
       .toDate();
 
-    cardFound.tarj_fecha_corte = updateCardDate;
+    cardFound.card_date_cutoff = updateCardDate;
     return await this.cardsRepository.save(cardFound);
   }
 
   async updateDateDueDate(CardID: string) {
     const cardFound = (await this.getCard(CardID)) as Cards;
     console.log(cardFound);
-    const updateCardDate = dayjs(cardFound.tarj_fecha_vencimiento, 'YYYY-MM-DD')
+    const updateCardDate = dayjs(cardFound.card_date_due, 'YYYY-MM-DD')
       .add(1, 'month')
       .toDate();
 
-    cardFound.tarj_fecha_vencimiento = updateCardDate;
+    cardFound.card_date_due = updateCardDate;
     return await this.cardsRepository.save(cardFound);
   }
 
   async getAllCardsCredit() {
     const cardsFounds = await this.cardsRepository.find({
-      where: { tiptarj_id_fk: { tiptarj_id: 1 } },
+      where: { typecard_id_fk: { typecard_id: 1 } },
     });
 
     return cardsFounds
@@ -81,10 +81,10 @@ export class CardsService {
           HttpStatus.CONFLICT,
         );
   }
-  async getAllCards(cuentaID: string) {
+  async getAllCards(accountID: string) {
     const cardsFounds = await this.cardsRepository.find({
-      where: { cuenta_id_fk: { cuenta_id: cuentaID } },
-      relations: ['tiptarj_id_fk', 'mtarj_id_fk'],
+      where: { account_id_fk: { account_id: accountID } },
+      relations: ['typecard_id_fk', 'bcard_id_fk'],
     });
 
     return cardsFounds
@@ -105,7 +105,7 @@ export class CardsService {
 
   async createCards(card: CreateCardDto) {
     const accountFound = (await this.userServices.getAccount(
-      card.cuenta_id_fk.cuenta_id,
+      card.account_id_fk.account_id,
     )) as Accounts;
 
     if (accountFound instanceof HttpException) {
@@ -114,14 +114,14 @@ export class CardsService {
     const cardID = this.createIDCard(card, accountFound.cards.length);
 
     let newCard: CreateCardDto;
-    if (card.tiptarj_id_fk.tiptarj_id === 1) {
+    if (card.typecard_id_fk.typecard_id === 1) {
       newCard = this.cardsRepository.create({
         ...card,
         tarj_id: cardID,
-        tarj_saldo_total: card.tarj_cupo,
+        tarj_saldo_total: card.card_quota,
         tarj_saldo_pagar: 0.0,
       });
-    } else if (card.tiptarj_id_fk.tiptarj_id === 2) {
+    } else if (card.typecard_id_fk.typecard_id === 2) {
       newCard = this.cardsRepository.create({
         ...card,
         tarj_id: cardID,
@@ -136,13 +136,13 @@ export class CardsService {
 
   createIDCard(card: CreateCardDto, numberCard: number) {
     let typeCard = '';
-    if (card.tiptarj_id_fk.tiptarj_id === 1) {
+    if (card.typecard_id_fk.typecard_id === 1) {
       typeCard = 'C';
-    } else if (card.tiptarj_id_fk.tiptarj_id === 2) {
+    } else if (card.typecard_id_fk.typecard_id === 2) {
       typeCard = 'D';
     }
     const cardID: string =
-      card.cuenta_id_fk.cuenta_id.substring(8, 12) +
+      card.account_id_fk.account_id.substring(8, 12) +
       'TAR' +
       typeCard +
       numberCard;

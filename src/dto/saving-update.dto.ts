@@ -5,6 +5,6 @@ import { Accounts } from 'src/users/accounts.entity';
 export class SavingUpdateDto {
   amount: number;
   ttrac_id_fk: TypeTrasanctions;
-  cuenta_id_fk: Accounts;
-  aho_id_fk: Savings;
+  account_id_fk: Accounts;
+  saving_id_fk: Savings;
 }

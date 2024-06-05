@@ -3,14 +3,14 @@ import { TypeCards } from 'src/cards/entities/typeCards.entity';
 import { Accounts } from 'src/users/accounts.entity';
 
 export class CreateCardDto {
-  tarj_nombre: string;
-  tarj_descripcion: string;
-  tarj_cupo: number;
+  card_name: string;
+  card_description: string;
+  card_quota: number;
   // tarj_saldo_total?: number;
   // tarj_saldo_pagar?: number;
-  tarj_fecha_corte: Date;
-  tarj_fecha_vencimiento: Date;
-  mtarj_id_fk: CardsBrands;
-  tiptarj_id_fk: TypeCards;
-  cuenta_id_fk: Accounts;
+  card_date_cutoff: Date;
+  card_date_due: Date;
+  bcard_id_fk: CardsBrands;
+  typecard_id_fk: TypeCards;
+  account_id_fk: Accounts;
 }

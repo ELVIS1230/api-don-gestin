@@ -1,14 +1,14 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Cards } from '../cards.entity';
 
-@Entity('tipo_tarjetas')
+@Entity('types_cards')
 export class TypeCards {
-  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'tipo_tarjetas_pk' })
-  tiptarj_id: number;
+  @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'type_card_pk' })
+  typecard_id: number;
 
   @Column({ type: 'varchar', length: '25' })
-  tiptarj_tipo: string;
+  typecard_type: string;
 
-  @OneToMany(() => Cards, (card) => card.tiptarj_id_fk)
+  @OneToMany(() => Cards, (card) => card.typecard_id_fk)
   cards: Cards[];
 }

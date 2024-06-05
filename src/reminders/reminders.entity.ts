@@ -1,19 +1,19 @@
 import { Users } from 'src/users/users.entity';
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 
-@Entity('recordatorios')
+@Entity('reminders')
 export class Reminders {
-  @PrimaryColumn({ primaryKeyConstraintName: 'recordatorios_pk' })
+  @PrimaryColumn({ primaryKeyConstraintName: 'reminders_pk' })
   record_id: string;
 
   @Column({ type: 'varchar' })
-  record_nombre: string;
+  remind_name: string;
 
   @Column({ type: 'varchar' })
-  record_descripcion: string;
+  remind_description: string;
 
   @Column({ type: 'date' })
-  record_fecha: string;
+  remind_date: string;
 
   @ManyToOne(() => Users, (user) => user.reminders)
   @JoinColumn({

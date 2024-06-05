@@ -3,14 +3,14 @@ import { Savings } from 'src/savings/savings.entity';
 import { Transactions } from 'src/transactions/transactions.entity';
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
-@Entity('cuentas')
+@Entity('accounts')
 export class Accounts {
   // @Column({ unique: true })
-  @PrimaryColumn({ primaryKeyConstraintName: 'cuenta_id_pk' })
-  cuenta_id: string;
+  @PrimaryColumn({ primaryKeyConstraintName: 'account_id_pk' })
+  account_id: string;
 
   @Column({ type: 'decimal', default: () => '00.00' })
-  cuenta_saldo: number;
+  account_balance: number;
 
   @Column({
     type: 'timestamp with time zone',
@@ -18,12 +18,12 @@ export class Accounts {
   })
   createdAt: Date;
 
-  @OneToMany(() => Transactions, (transaction) => transaction.cuenta_id_fk)
+  @OneToMany(() => Transactions, (transaction) => transaction.account_id_fk)
   transactions: Transactions[];
 
-  @OneToMany(() => Cards, (card) => card.cuenta_id_fk)
+  @OneToMany(() => Cards, (card) => card.account_id_fk)
   cards: Cards[];
 
-  @OneToMany(() => Savings, (saving) => saving.cuenta_id_fk)
+  @OneToMany(() => Savings, (saving) => saving.account_id_fk)
   savings: Savings[];
 }

@@ -32,8 +32,8 @@ export class RemindersService {
     for (const reminder of reminders) {
       await this.mailerService.sendMail({
         from: `"Don Gestin" <elcochineytor@gmail.com>`,
-        to: `${reminder.u_cedula_fk.u_correo}`,
-        subject: `Don gestin: ${reminder.record_nombre}`,
+        to: `${reminder.u_cedula_fk.u_email}`,
+        subject: `Don gestin: ${reminder.remind_name}`,
         html: `
           <html>
           <head>
@@ -121,16 +121,16 @@ export class RemindersService {
                 <div class="linea2"></div>
             </div>
             <div class="contenedor-parrafos">
-            <p class="nombre">Sr/a <span>${reminder.u_cedula_fk.u_nombre} ${reminder.u_cedula_fk.u_apellido}</span> se le notifica que usted creó un recordatorio en la aplicación 
+            <p class="nombre">Sr/a <span>${reminder.u_cedula_fk.u_name} ${reminder.u_cedula_fk.u_lastname}</span> se le notifica que usted creó un recordatorio en la aplicación 
             <span>Don Gestin</span> para realizar algún pago</p>
                 <p class="center">El recordatorio que usted creo es:</p>
             </div>
 
             
             <div class="contenedor-recordatorio">
-            <h1>${reminder.record_nombre}</h1>
+            <h1>${reminder.remind_name}</h1>
                 <h4>Descripcion:</h4>
-                <p>${reminder.record_descripcion}</p>
+                <p>${reminder.remind_description}</p>
             </div>
         </div>
     </div>
@@ -145,10 +145,10 @@ export class RemindersService {
   async updateDateReminder(reminderID: string) {
     // El formato de la fecha deberia ser 'YYYY-MM-DD'
     const reminderFound = (await this.getReminder(reminderID)) as Reminders;
-    const updateCardDate = dayjs(reminderFound.record_fecha, 'MM-DD-YYYY')
+    const updateCardDate = dayjs(reminderFound.remind_date, 'MM-DD-YYYY')
       .add(1, 'month')
       .format('MM-DD-YYYY');
-    reminderFound.record_fecha = updateCardDate;
+    reminderFound.remind_date = updateCardDate;
     return await this.remindersRepository.save(reminderFound);
   }
 
@@ -157,7 +157,7 @@ export class RemindersService {
     const today = dayjs().format('MM-DD-YYYY');
     console.log(today);
     const remindersFound = await this.remindersRepository.find({
-      where: { record_fecha: today },
+      where: { remind_date: today },
       relations: ['u_cedula_fk'],
     });
     console.log(remindersFound);
@@ -191,7 +191,7 @@ export class RemindersService {
   async getAllRemindersForUser(cedula: string) {
     const remindersFound = (await this.remindersRepository.find({
       where: { u_cedula_fk: { u_cedula: cedula } },
-      order: { record_fecha: 'DESC' },
+      order: { remind_date: 'DESC' },
     })) as Reminders[];
     return remindersFound;
   }

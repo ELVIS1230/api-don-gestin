@@ -9,35 +9,35 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 
-@Entity('ahorros')
+@Entity('saving')
 export class Savings {
   @PrimaryColumn({
-    primaryKeyConstraintName: 'ahorro_pk',
+    primaryKeyConstraintName: 'saving_pk',
   })
   aho_id: string;
 
   @Column({ type: 'varchar' })
-  aho_nombre: string;
+  saving_name: string;
 
   @Column({ type: 'varchar' })
-  aho_descripcion: string;
+  saving_description: string;
 
   @Column({ type: 'varchar', nullable: true })
-  aho_duracion: string;
+  saving_duration: string;
 
   @Column({ type: 'decimal' })
-  aho_meta_cantidad: number;
+  saving_goal_quantity: number;
 
   @Column({ type: 'decimal' })
-  aho_cantidad_total: number;
+  saving_quantity_total: number;
 
   @ManyToOne(() => Accounts, (account) => account.savings)
   @JoinColumn({
-    name: 'cuenta_id_fk',
-    foreignKeyConstraintName: 'cuenta_fk',
+    name: 'account_id_fk',
+    foreignKeyConstraintName: 'account_fk',
   })
-  cuenta_id_fk: Accounts;
+  account_id_fk: Accounts;
 
-  @OneToMany(() => Transactions, (transaction) => transaction.aho_id_fk)
+  @OneToMany(() => Transactions, (transaction) => transaction.saving_id_fk)
   trasactions: Transactions[];
 }

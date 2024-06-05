@@ -14,8 +14,8 @@ export class UsersService {
 
   async loginUser(userLogin: { email: string; password: string }) {
     const userFound = (await this.userRepository.findOne({
-      where: { u_correo: userLogin.email, u_contraseña: userLogin.password },
-      relations: ['cuenta_id_fk', 'reminders'],
+      where: { u_email: userLogin.email, u_password: userLogin.password },
+      relations: ['account_id_fk', 'reminders'],
     })) as Users;
 
     // console.log(userFound);
@@ -29,7 +29,7 @@ export class UsersService {
   async getUser(u_cedula: string) {
     const userFound = await this.userRepository.findOne({
       where: { u_cedula },
-      relations: ['cuenta_id_fk', 'reminders'],
+      relations: ['account_id_fk', 'reminders'],
     });
 
     return userFound
@@ -37,9 +37,9 @@ export class UsersService {
       : new HttpException('Usuario no encontrado ', HttpStatus.NOT_FOUND);
   }
 
-  async getAccount(cuenta_id: string) {
+  async getAccount(account_id: string) {
     const accoutFound = await this.accountRepository.findOne({
-      where: { cuenta_id },
+      where: { account_id },
       relations: ['cards', 'savings'],
     });
 
@@ -61,7 +61,7 @@ export class UsersService {
 
     const newUser = this.userRepository.create({
       ...user,
-      cuenta_id_fk: accountID,
+      account_id_fk: accountID,
     });
     return this.userRepository.save(newUser);
   }
@@ -70,13 +70,15 @@ export class UsersService {
     // const userSplit = userFound.u_cedula.substring(0, 8);
     const AccountsID =
       userFound.u_cedula +
-      userFound.u_nombre[0].toUpperCase() +
-      userFound.u_apellido[0].toUpperCase();
+      userFound.u_name[0].toUpperCase() +
+      userFound.u_lastname[0].toUpperCase();
 
     return AccountsID;
   }
   createAccount(AccountsID: string) {
-    const newAccount = this.accountRepository.create({ cuenta_id: AccountsID });
+    const newAccount = this.accountRepository.create({
+      account_id: AccountsID,
+    });
     const savedAccount = this.accountRepository.save(newAccount);
     return savedAccount;
   }
@@ -84,9 +86,9 @@ export class UsersService {
     console.log(AccountsID);
     const accountRepository = await this.accountRepository.increment(
       {
-        cuenta_id: AccountsID,
+        account_id: AccountsID,
       },
-      'cuenta_saldo',
+      'account_balance',
       Amount,
     );
     return accountRepository;
@@ -94,9 +96,9 @@ export class UsersService {
   async decrementBalanceAccount(AccountsID: string, Amount: number) {
     const accountRepository = await this.accountRepository.decrement(
       {
-        cuenta_id: AccountsID,
+        account_id: AccountsID,
       },
-      'cuenta_saldo',
+      'account_balance',
       Amount,
     );
     return accountRepository;
