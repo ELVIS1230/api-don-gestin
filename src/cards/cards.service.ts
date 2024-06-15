@@ -28,9 +28,9 @@ export class CardsService {
     const cards = (await this.getAllCardsCredit()) as Cards[];
     const cardsUpdate: Cards[] = [];
     for (const card of cards) {
-      if (await this.verifyDueCard(card.tarj_id)) {
-        await this.updateDateDueDate(card.tarj_id);
-        await this.updateDateCutoffDate(card.tarj_id);
+      if (await this.verifyDueCard(card.card_id)) {
+        await this.updateDateDueDate(card.card_id);
+        await this.updateDateCutoffDate(card.card_id);
         cardsUpdate.push(card);
       }
     }
@@ -96,7 +96,7 @@ export class CardsService {
   }
   async getCard(cardID: string) {
     const cardFound = (await this.cardsRepository.findOne({
-      where: { tarj_id: cardID },
+      where: { card_id: cardID },
     })) as Cards;
     return cardFound
       ? (cardFound as Cards)
@@ -117,15 +117,15 @@ export class CardsService {
     if (card.typecard_id_fk.typecard_id === 1) {
       newCard = this.cardsRepository.create({
         ...card,
-        tarj_id: cardID,
-        tarj_saldo_total: card.card_quota,
-        tarj_saldo_pagar: 0.0,
+        card_id: cardID,
+        card_balance_total: card.card_quota,
+        card_balance_pay: 0.0,
       });
     } else if (card.typecard_id_fk.typecard_id === 2) {
       newCard = this.cardsRepository.create({
         ...card,
-        tarj_id: cardID,
-        tarj_saldo_total: 0.0,
+        card_id: cardID,
+        card_balance_total: 0.0,
       });
     }
 
@@ -152,16 +152,16 @@ export class CardsService {
   async incrementBalanceCard(cardID: string, Amount: number) {
     const cardIncrement = await this.cardsRepository.increment(
       {
-        tarj_id: cardID,
+        card_id: cardID,
       },
-      'tarj_saldo_total',
+      'card_balance_total',
       Amount,
     );
     const cardDecrementDebt = await this.cardsRepository.decrement(
       {
-        tarj_id: cardID,
+        card_id: cardID,
       },
-      'tarj_saldo_pagar',
+      'card_balance_pay',
       Amount,
     );
     return { cardIncrement, cardDecrementDebt };
@@ -169,16 +169,16 @@ export class CardsService {
   async decrementBalanceCard(cardID: string, Amount: number) {
     const cardDecrement = await this.cardsRepository.decrement(
       {
-        tarj_id: cardID,
+        card_id: cardID,
       },
-      'tarj_saldo_total',
+      'card_balance_total',
       Amount,
     );
     const cardIncrementDebt = await this.cardsRepository.increment(
       {
-        tarj_id: cardID,
+        card_id: cardID,
       },
-      'tarj_saldo_pagar',
+      'card_balance_pay',
       Amount,
     );
     return { cardDecrement, cardIncrementDebt };

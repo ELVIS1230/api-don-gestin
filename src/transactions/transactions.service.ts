@@ -116,15 +116,15 @@ export class TransactionsService {
 
   async createTrasanctionWithCard(transaction: CreateTransactionDto) {
     const cardFound = (await this.cardsService.getCard(
-      transaction.card_id_fk.tarj_id,
+      transaction.card_id_fk.card_id,
     )) as Cards;
 
     if (cardFound instanceof HttpException) {
       return new HttpException('Tarjeta no encontrada ', HttpStatus.NOT_FOUND);
     } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
       if (
-        cardFound.tarj_saldo_total <= 0.0 ||
-        cardFound.tarj_saldo_total < transaction.trasac_quantity
+        cardFound.card_balance_total <= 0.0 ||
+        cardFound.card_balance_total < transaction.trasac_quantity
       ) {
         return new HttpException(
           'La trasanccion supera el valor disponible de su tarjeta',
@@ -136,21 +136,21 @@ export class TransactionsService {
 
     if (transaction.ttrac_id_fk.ttrac_id === 1) {
       await this.cardsService.incrementBalanceCard(
-        transaction.card_id_fk.tarj_id,
+        transaction.card_id_fk.card_id,
         transaction.trasac_quantity,
       );
 
       balanceTotal =
-        parseFloat(cardFound.tarj_saldo_total.toString()) +
+        parseFloat(cardFound.card_balance_total.toString()) +
         transaction.trasac_quantity;
     } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
       await this.cardsService.decrementBalanceCard(
-        transaction.card_id_fk.tarj_id,
+        transaction.card_id_fk.card_id,
         transaction.trasac_quantity,
       );
 
       balanceTotal =
-        parseFloat(cardFound.tarj_saldo_total.toString()) -
+        parseFloat(cardFound.card_balance_total.toString()) -
         transaction.trasac_quantity;
     }
 
@@ -280,7 +280,7 @@ export class TransactionsService {
   async getTansactionsCardsOneCard(cardID: string) {
     const registros = await this.transactionsRepository.find({
       where: {
-        card_id_fk: { tarj_id: cardID },
+        card_id_fk: { card_id: cardID },
       },
       order: { createdAt: 'DESC' },
       relations: ['ttrac_id_fk', 'card_id_fk'],

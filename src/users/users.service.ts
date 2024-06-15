@@ -1,9 +1,15 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './users.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { Accounts } from './accounts.entity';
+import * as jwt from 'jwt-simple';
 
 @Injectable()
 export class UsersService {
@@ -13,19 +19,39 @@ export class UsersService {
   ) {}
 
   async loginUser(userLogin: { email: string; password: string }) {
+    if (!userLogin.email) {
+      throw new BadRequestException({
+        info: { typeCode: 'NotEmail' },
+        message: 'Es necesario enviar el email',
+      });
+    }
+    if (!userLogin.password) {
+      throw new BadRequestException({
+        info: { typeCode: 'NotPassword' },
+        message: 'Es necesario enviar su contraseña',
+      });
+    }
     const userFound = (await this.userRepository.findOne({
       where: { u_email: userLogin.email, u_password: userLogin.password },
       relations: ['account_id_fk', 'reminders'],
     })) as Users;
 
-    // console.log(userFound);
-    return userFound
-      ? userFound
-      : new HttpException(
-          'Credenciales incorrectas o no encontradas',
-          HttpStatus.NOT_FOUND,
-        );
+    if (!userFound) {
+      throw new BadRequestException({
+        info: { typeCode: 'BadCrendential' },
+        message: 'Credenciales incorrectas, usuario o contraseña',
+      });
+    }
+    const payload = {
+      u_cedula: userFound.u_cedula,
+      u_name: userFound.u_name,
+      u_lastname: userFound.u_lastname,
+      u_email: userFound.u_email,
+      account_id_fk: userFound.account_id_fk.account_id,
+    };
+    return jwt.encode(payload, 'userd457ART531');
   }
+
   async getUser(u_cedula: string) {
     const userFound = await this.userRepository.findOne({
       where: { u_cedula },

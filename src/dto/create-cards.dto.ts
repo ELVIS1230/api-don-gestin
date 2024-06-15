@@ -6,8 +6,8 @@ export class CreateCardDto {
   card_name: string;
   card_description: string;
   card_quota: number;
-  // tarj_saldo_total?: number;
-  // tarj_saldo_pagar?: number;
+  // card_balance_total?: number;
+  // card_balance_pay?: number;
   card_date_cutoff: Date;
   card_date_due: Date;
   bcard_id_fk: CardsBrands;

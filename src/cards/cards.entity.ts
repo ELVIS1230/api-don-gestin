@@ -18,7 +18,7 @@ export class Cards {
     type: 'varchar',
     length: 9,
   })
-  tarj_id: string;
+  card_id: string;
 
   @Column({ type: 'varchar', length: '25' })
   card_name: string;
@@ -30,10 +30,10 @@ export class Cards {
   card_quota: number;
 
   @Column({ type: 'decimal' })
-  tarj_saldo_total: number;
+  card_balance_total: number;
 
   @Column({ type: 'decimal', nullable: true })
-  tarj_saldo_pagar: number;
+  card_balance_pay: number;
 
   @Column({ type: 'date', nullable: true })
   card_date_cutoff: Date;
