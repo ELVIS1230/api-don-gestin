@@ -16,6 +16,7 @@ export class SavingsController {
   constructor(private savingsServices: SavingsService) {}
   @Get(':AccountID')
   getAllSavings(@Param('AccountID') AccountID: string) {
+    console.log(AccountID);
     return this.savingsServices.getAllSavings(AccountID);
   }
 

@@ -137,7 +137,7 @@ export class RemindersService {
         </body>
         </html>`,
       });
-      await this.updateDateReminder(reminder.record_id);
+      await this.updateDateReminder(reminder.remind_id);
     }
     return reminders;
   }
@@ -171,7 +171,7 @@ export class RemindersService {
 
   async getReminder(reminderID: string) {
     const reminderFound = await this.remindersRepository.findOne({
-      where: { record_id: reminderID },
+      where: { remind_id: reminderID },
     });
     return reminderFound;
     // ? reminderFound
@@ -206,7 +206,7 @@ export class RemindersService {
     );
     const newReminder = this.remindersRepository.create({
       ...reminder,
-      record_id: reminderID,
+      remind_id: reminderID,
     });
 
     console.log(reminder);

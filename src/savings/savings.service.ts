@@ -19,7 +19,7 @@ export class SavingsService {
   // async updateAmountSaving(savingUpdate: { savingID: string; amount: number }) {
   async updateAmountSaving(savingUpdate: SavingUpdateDto) {
     const savingFound = (await this.getSaving(
-      savingUpdate.saving_id_fk.aho_id,
+      savingUpdate.saving_id_fk.saving_id,
     )) as Savings;
 
     const savingTransactions = {
@@ -37,7 +37,7 @@ export class SavingsService {
       savingUpdate.amount;
     // console.log(amountTotal);
     return await this.savingsRepository.update(
-      savingUpdate.saving_id_fk.aho_id,
+      savingUpdate.saving_id_fk.saving_id,
       {
         saving_quantity_total: amountTotal,
       },
@@ -55,7 +55,7 @@ export class SavingsService {
 
     const newSavings: Savings = this.savingsRepository.create({
       ...saving,
-      aho_id: savingID,
+      saving_id: savingID,
     });
 
     await this.savingsRepository.save(newSavings);
@@ -79,7 +79,7 @@ export class SavingsService {
 
   async getSaving(savingID: string) {
     const savingFound = (await this.savingsRepository.findOne({
-      where: { aho_id: savingID },
+      where: { saving_id: savingID },
     })) as Savings;
 
     return savingFound;

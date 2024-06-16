@@ -14,7 +14,7 @@ export class Savings {
   @PrimaryColumn({
     primaryKeyConstraintName: 'saving_pk',
   })
-  aho_id: string;
+  saving_id: string;
 
   @Column({ type: 'varchar' })
   saving_name: string;

@@ -10,10 +10,10 @@ export class TypeTrasanctions {
   ttrac_id: number;
 
   @Column({ type: 'varchar', length: '25' })
-  ttracc_nombre: string;
+  ttrac_name: string;
 
   @Column({ type: 'varchar', length: '60' })
-  ttrac_descripcion: string;
+  ttrac_description: string;
 
   @OneToMany(() => Transactions, (transactions) => transactions.ttrac_id_fk)
   transactions: Transactions[];

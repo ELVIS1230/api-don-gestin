@@ -4,7 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 @Entity('reminders')
 export class Reminders {
   @PrimaryColumn({ primaryKeyConstraintName: 'reminders_pk' })
-  record_id: string;
+  remind_id: string;
 
   @Column({ type: 'varchar' })
   remind_name: string;

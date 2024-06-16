@@ -182,7 +182,7 @@ export class TransactionsService {
       const table = {
         headers: ['Trasaccion', 'Nombre', 'Cantidad', 'Total'],
         rows: transactionsFound.map((transaction) => [
-          transaction.ttrac_id_fk.ttracc_nombre,
+          transaction.ttrac_id_fk.ttrac_name,
           transaction.trasac_name,
           transaction.trasac_quantity.toString(),
           transaction.trasac_balance.toString(),
@@ -253,6 +253,7 @@ export class TransactionsService {
       take: 2,
       relations: ['ttrac_id_fk', 'account_id_fk'],
     });
+    console.log(registros);
     return registros;
   }
 
