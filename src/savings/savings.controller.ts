@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateSavingsDto } from 'src/dto/create-savings.dto';
 import { SavingsService } from './savings.service';
-import { SavingUpdateDto } from 'src/dto/saving-update.dto';
+import { SavingNameDto, SavingUpdateDto } from 'src/dto/saving-update.dto';
 
 @Controller('savings')
 export class SavingsController {
@@ -33,5 +33,9 @@ export class SavingsController {
   @Patch('/amount')
   updateAmountSaving(@Body() savingUpdate: SavingUpdateDto) {
     return this.savingsServices.updateAmountSaving(savingUpdate);
+  }
+  @Patch('/:id')
+  updateNameSaving(@Param('id') id: string, @Body() savingNameDto: SavingNameDto) {
+    return this.savingsServices.updateNameSaving(id, savingNameDto);
   }
 }

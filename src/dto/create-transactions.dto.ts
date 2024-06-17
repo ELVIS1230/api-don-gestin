@@ -14,3 +14,8 @@ export class CreateTransactionDto {
   card_id_fk?: Cards;
   saving_id_fk?: any;
 }
+
+export class UpdateTransactionDto {
+  trasac_name: string;
+  trasac_description: string;
+}

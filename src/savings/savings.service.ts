@@ -6,7 +6,7 @@ import { CreateSavingsDto } from 'src/dto/create-savings.dto';
 import { TransactionsService } from 'src/transactions/transactions.service';
 import { UsersService } from 'src/users/users.service';
 import { Accounts } from 'src/users/accounts.entity';
-import { SavingUpdateDto } from 'src/dto/saving-update.dto';
+import { SavingNameDto, SavingUpdateDto } from 'src/dto/saving-update.dto';
 
 @Injectable()
 export class SavingsService {
@@ -40,6 +40,13 @@ export class SavingsService {
       savingUpdate.saving_id_fk.saving_id,
       {
         saving_quantity_total: amountTotal,
+      },
+    );
+  }
+  async updateNameSaving(savingID: string, savingNameDto: SavingNameDto) {
+    // console.log(amountTotal);
+    return await this.savingsRepository.update(savingID,{
+      saving_name: savingNameDto.saving_name,
       },
     );
   }

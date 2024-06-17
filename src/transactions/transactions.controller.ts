@@ -5,9 +5,10 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Res,
 } from '@nestjs/common';
-import { CreateTransactionDto } from 'src/dto/create-transactions.dto';
+import { CreateTransactionDto, UpdateTransactionDto } from 'src/dto/create-transactions.dto';
 import { TransactionsService } from './transactions.service';
 
 @Controller('transactions')
@@ -24,6 +25,12 @@ export class TransactionsController {
   @Delete(':id')
   deleteTransaction(@Param('id') id: string) {
     return this.transactionsService.deleteTransaction(id);
+  }
+  @Put(':id')
+  updateTransaction(@Param('id') id: number,
+  @Body() updateTransactionDto: UpdateTransactionDto,
+) {
+    return this.transactionsService.updateTransaction(id, updateTransactionDto);
   }
   @Get(':id')
   getTransactions(@Param('id') id: string) {

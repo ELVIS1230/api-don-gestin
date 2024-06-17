@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Transactions } from './transactions.entity';
 import { Repository } from 'typeorm';
-import { CreateTransactionDto } from 'src/dto/create-transactions.dto';
+import { CreateTransactionDto, UpdateTransactionDto } from 'src/dto/create-transactions.dto';
 import { Accounts } from 'src/users/accounts.entity';
 import { CardsService } from 'src/cards/cards.service';
 import { Cards } from 'src/cards/cards.entity';
@@ -51,6 +51,15 @@ export class TransactionsService {
   deleteTransaction(transactionID: string) {
     const transactionsFound = this.transactionsRepository.delete(transactionID);
     return transactionsFound;
+  }
+  async updateTransaction(transactionID: number, updateTransactionDto: UpdateTransactionDto) {
+    const transactionFound = await this.transactionsRepository.findOneBy({ trasac_id:transactionID });
+    
+    transactionFound.trasac_name = updateTransactionDto.trasac_name;
+    transactionFound.trasac_description = updateTransactionDto.trasac_description;
+    
+    const  transactionUpdated = await this.transactionsRepository.save(transactionFound);
+    return transactionUpdated;
   }
   getTransactionExpenses(accountID: string) {
     const transactionsFound = this.transactionsRepository.find({

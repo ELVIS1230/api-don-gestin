@@ -8,3 +8,7 @@ export class SavingUpdateDto {
   account_id_fk: Accounts;
   saving_id_fk: Savings;
 }
+
+export class SavingNameDto {
+  saving_name: string;
+}
