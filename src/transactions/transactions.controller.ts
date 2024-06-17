@@ -55,6 +55,7 @@ export class TransactionsController {
     return this.transactionsService.getTansactionsCardsOneCard(cardID);
   }
 
+  
   @Get('/dash/:id')
   getDash(@Param('id') id: string) {
     return this.transactionsService.dataDash(id);

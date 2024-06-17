@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { RemindersService } from './reminders.service';
 import { CreateRemindersDto } from 'src/dto/create-reminders.dto';
+import { UpdateReminderDto } from 'src/dto/update-reminders.dto';
 
 @Controller('reminders')
 export class RemindersController {
@@ -17,6 +18,10 @@ export class RemindersController {
   @Get('/:id')
   getAllRemindersForUser(@Param('id') id: string) {
     return this.remindersServices.getAllRemindersForUser(id);
+  }
+  @Patch('/:id')
+  updateNameReminder(@Param('id') id: string,  @Body() updateReminderDto: UpdateReminderDto) {
+    return this.remindersServices.updateNameReminder(id, updateReminderDto);
   }
 
   @Get('/date')

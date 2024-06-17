@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { Users } from 'src/users/users.entity';
 import * as dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UpdateReminderDto } from 'src/dto/update-reminders.dto';
 
 @Injectable()
 export class RemindersService {
@@ -150,6 +151,13 @@ export class RemindersService {
       .format('MM-DD-YYYY');
     reminderFound.remind_date = updateCardDate;
     return await this.remindersRepository.save(reminderFound);
+  }
+  async updateNameReminder(reminderID: string, updateReminderDto: UpdateReminderDto ) {
+    return await this.remindersRepository.update(reminderID,{
+      remind_name: updateReminderDto.remind_name,
+      remind_description: updateReminderDto.remind_description,
+      }
+    )
   }
 
   async getRemindersForDate() {

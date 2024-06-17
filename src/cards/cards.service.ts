@@ -7,6 +7,7 @@ import { Accounts } from 'src/users/accounts.entity';
 import { CreateCardDto } from 'src/dto/create-cards.dto';
 // import { Cron, CronExpression } from '@nestjs/schedule';
 import * as dayjs from 'dayjs';
+import { UpdateCardDto } from 'src/dto/update-cards.dto';
 
 @Injectable()
 export class CardsService {
@@ -101,8 +102,15 @@ export class CardsService {
     return cardFound
       ? (cardFound as Cards)
       : new HttpException('Tarjeta no encontrada', HttpStatus.NOT_FOUND);
-  }
-
+  } 
+  async UpdateCard(cardID: string, updateCardDto: UpdateCardDto) {
+    return await this.cardsRepository.update(cardID, {
+      card_name: updateCardDto.card_name,
+      card_description: updateCardDto.card_description,
+    }
+  );
+  } 
+  
   async createCards(card: CreateCardDto) {
     const accountFound = (await this.userServices.getAccount(
       card.account_id_fk.account_id,

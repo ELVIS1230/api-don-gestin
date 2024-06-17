@@ -297,6 +297,7 @@ export class TransactionsService {
     });
     return registros;
   }
+
 }
 
 // async getDashReminders(){}
