@@ -1,15 +1,24 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CardsService } from './cards.service';
 import {
   CreateCardDto,
   // CreateCardDebitDto,
 } from 'src/dto/create-cards.dto';
 import { UpdateCardDto } from 'src/dto/update-cards.dto';
+import { CardsGuard } from './cards.guard';
 
 @Controller('cards')
 export class CardsController {
   constructor(private cardsServices: CardsService) {}
-
+  @UseGuards(CardsGuard)
   @Get(':id')
   getAllCards(@Param('id') id: string) {
     return this.cardsServices.getAllCards(id);
@@ -33,7 +42,7 @@ export class CardsController {
   // actualizar(@Param('id') id: string) {
   //   return this.cardsServices.verifyDueCard(id);
   // }
-  @Patch('/one/:id')  
+  @Patch('/one/:id')
   UpdateCard(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
     return this.cardsServices.UpdateCard(id, updateCardDto);
   }

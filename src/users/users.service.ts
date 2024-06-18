@@ -51,7 +51,7 @@ export class UsersService {
       account_id_fk: userFound.account_id_fk.account_id,
     };
     const token = jwt.encode(payload, 'userd457ART531');
-    return userFound;
+    return { user: userFound, token };
   }
 
   async getUser(u_cedula: string) {
