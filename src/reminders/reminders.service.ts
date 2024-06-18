@@ -154,8 +154,8 @@ export class RemindersService {
   }
   async updateNameReminder(reminderID: string, updateReminderDto: UpdateReminderDto ) {
     return await this.remindersRepository.update(reminderID,{
-      remind_name: updateReminderDto.remind_name,
-      remind_description: updateReminderDto.remind_description,
+      remind_name: updateReminderDto.name,
+      remind_description: updateReminderDto.description,
       }
     )
   }

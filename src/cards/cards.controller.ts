@@ -33,7 +33,7 @@ export class CardsController {
   // actualizar(@Param('id') id: string) {
   //   return this.cardsServices.verifyDueCard(id);
   // }
-  @Patch('/one/:id')
+  @Patch('/one/:id')  
   UpdateCard(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
     return this.cardsServices.UpdateCard(id, updateCardDto);
   }

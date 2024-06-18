@@ -46,7 +46,8 @@ export class SavingsService {
   async updateNameSaving(savingID: string, savingNameDto: SavingNameDto) {
     // console.log(amountTotal);
     return await this.savingsRepository.update(savingID,{
-      saving_name: savingNameDto.saving_name,
+      saving_name: savingNameDto.name,
+      saving_description: savingNameDto.description,
       },
     );
   }

@@ -105,8 +105,8 @@ export class CardsService {
   } 
   async UpdateCard(cardID: string, updateCardDto: UpdateCardDto) {
     return await this.cardsRepository.update(cardID, {
-      card_name: updateCardDto.card_name,
-      card_description: updateCardDto.card_description,
+      card_name: updateCardDto.name,
+      card_description: updateCardDto.description,
     }
   );
   } 

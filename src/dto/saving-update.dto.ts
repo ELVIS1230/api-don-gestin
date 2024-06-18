@@ -10,5 +10,6 @@ export class SavingUpdateDto {
 }
 
 export class SavingNameDto {
-  saving_name: string;
+  name: string;
+  description: string;
 }

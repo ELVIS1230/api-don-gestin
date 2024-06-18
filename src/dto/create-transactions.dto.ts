@@ -16,6 +16,6 @@ export class CreateTransactionDto {
 }
 
 export class UpdateTransactionDto {
-  trasac_name: string;
-  trasac_description: string;
+  name: string;
+  description: string;
 }

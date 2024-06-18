@@ -55,8 +55,8 @@ export class TransactionsService {
   async updateTransaction(transactionID: number, updateTransactionDto: UpdateTransactionDto) {
     const transactionFound = await this.transactionsRepository.findOneBy({ trasac_id:transactionID });
     
-    transactionFound.trasac_name = updateTransactionDto.trasac_name;
-    transactionFound.trasac_description = updateTransactionDto.trasac_description;
+    transactionFound.trasac_name = updateTransactionDto.name;
+    transactionFound.trasac_description = updateTransactionDto.description;
     
     const  transactionUpdated = await this.transactionsRepository.save(transactionFound);
     return transactionUpdated;
