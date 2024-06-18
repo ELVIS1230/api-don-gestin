@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './users.entity';
@@ -81,7 +82,10 @@ export class UsersService {
     });
 
     if (userFound) {
-      return new HttpException('Usuario ya existente', HttpStatus.CONFLICT);
+      throw new ConflictException({
+        info: { typeCode: 'UserExist' },
+        message: 'Usuario ya existente con el número de cédula',
+      });
     }
     const accountID = this.createIDAccount(user);
     await this.createAccount(accountID);
