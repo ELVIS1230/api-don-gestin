@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Savings } from './savings.entity';
 import { Repository } from 'typeorm';
@@ -60,7 +60,13 @@ export class SavingsService {
       saving.account_id_fk.account_id,
       accountFound.savings.length,
     );
-
+    if (accountFound.account_balance < saving.saving_quantity_total) {
+      throw new BadRequestException({
+        typeCode: 'SavingWrong',
+        message: 'La trasancción supera el valor disponible en su cuenta',
+      });
+    }
+    console.log(saving);
     const newSavings: Savings = this.savingsRepository.create({
       ...saving,
       saving_id: savingID,

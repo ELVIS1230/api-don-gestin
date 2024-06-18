@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Transactions } from './transactions.entity';
@@ -86,13 +91,12 @@ export class TransactionsService {
         accountFound.account_balance <= 0.0 ||
         accountFound.account_balance < transaction.trasac_quantity
       ) {
-        return new HttpException(
-          'La trasanccion supera el valor de su cuenta',
-          HttpStatus.CONFLICT,
-        );
+        throw new BadRequestException({
+          typeCode: 'TransactionWrong',
+          message: 'La trasanccion supera el valor disponible de su tarjeta',
+        });
       }
     }
-
     let balanceTotal: number = 0;
     if (transaction.ttrac_id_fk.ttrac_id === 1) {
       await this.usersServices.incrementBalanceAccount(
@@ -127,18 +131,18 @@ export class TransactionsService {
     const cardFound = (await this.cardsService.getCard(
       transaction.card_id_fk.card_id,
     )) as Cards;
-
     if (cardFound instanceof HttpException) {
       return new HttpException('Tarjeta no encontrada ', HttpStatus.NOT_FOUND);
-    } else if (transaction.ttrac_id_fk.ttrac_id === 2) {
+    }
+    if (transaction.ttrac_id_fk.ttrac_id === 2) {
       if (
         cardFound.card_balance_total <= 0.0 ||
         cardFound.card_balance_total < transaction.trasac_quantity
       ) {
-        return new HttpException(
-          'La trasanccion supera el valor disponible de su tarjeta',
-          HttpStatus.CONFLICT,
-        );
+        throw new BadRequestException({
+          typeCode: 'TransactionWrong',
+          message: 'La trasanccion supera el valor disponible de su tarjeta',
+        });
       }
     }
     let balanceTotal = 0;
