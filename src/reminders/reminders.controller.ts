@@ -43,4 +43,10 @@ export class RemindersController {
   updateReminderDate(@Param('id') id: string) {
     return this.remindersServices.updateDateReminder(id);
   }
+
+  @Post('/send-reminders')
+  async sendReminders() {
+    console.log('entro aqui');
+    return await this.remindersServices.verifyReminders();
+  }
 }

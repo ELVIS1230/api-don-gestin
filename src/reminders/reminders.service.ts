@@ -29,7 +29,7 @@ export class RemindersService {
 
   async verifyReminders() {
     const reminders = (await this.getRemindersForDate()) as Reminders[];
-
+    console.log(reminders);
     for (const reminder of reminders) {
       await this.mailerService.sendMail({
         from: `"Don Gestin" <elcochineytor@gmail.com>`,
@@ -138,7 +138,7 @@ export class RemindersService {
         </body>
         </html>`,
       });
-      await this.updateDateReminder(reminder.remind_id);
+      // await this.updateDateReminder(reminder.remind_id);
     }
     return reminders;
   }
@@ -152,17 +152,19 @@ export class RemindersService {
     reminderFound.remind_date = updateCardDate;
     return await this.remindersRepository.save(reminderFound);
   }
-  async updateNameReminder(reminderID: string, updateReminderDto: UpdateReminderDto ) {
-    return await this.remindersRepository.update(reminderID,{
+  async updateNameReminder(
+    reminderID: string,
+    updateReminderDto: UpdateReminderDto,
+  ) {
+    return await this.remindersRepository.update(reminderID, {
       remind_name: updateReminderDto.name,
       remind_description: updateReminderDto.description,
-      }
-    )
+    });
   }
 
   async getRemindersForDate() {
     // El formato de la fecha deberia ser 'YYYY-MM-DD'
-    const today = dayjs().format('MM-DD-YYYY');
+    const today = dayjs().format('YYYY-MM-DD');
     console.log(today);
     const remindersFound = await this.remindersRepository.find({
       where: { remind_date: today },
